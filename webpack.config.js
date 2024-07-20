@@ -2,7 +2,7 @@ const path = require('path');
 
 module.exports = {
   mode: 'development', // or 'production'
-  entry: './src/renderer/index.js',
+  entry: './src/renderer/index.jsx',
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'bundle.js'
@@ -10,7 +10,7 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.js$/,
+        test: /\.(js|jsx)$/,
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
@@ -30,16 +30,13 @@ module.exports = {
             },
           },
         ],
-      }
+      },
+      {
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader'],
+      },
     ]
   },
-//   plugins: [
-//     new CopyWebpackPlugin({
-//       patterns: [
-//         { from: 'public', to: '' }  // Copy everything from 'public' to the output directory
-//       ]
-//     })
-//   ],
   resolve: {
     extensions: ['.js', '.jsx']
   },
