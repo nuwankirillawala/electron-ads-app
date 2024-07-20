@@ -5,7 +5,8 @@ import AdWindow from '../components/AdWindow/AdWindow'; // Import the AdWindow c
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
-  const [ad, setAd] = useState([]);
+  const [ad, setAd] = useState(null);
+  const [username, setUsername] = useState('');
 
   const handleLogin = async (username, password) => {
     const response = await fetch('http://localhost:3000/login', {
@@ -16,6 +17,7 @@ function App() {
 
     if (response.ok) {
       setLoggedIn(true);
+      setUsername(username); // Set username on login
     }
   };
 
@@ -27,6 +29,7 @@ function App() {
 
     if (response.ok) {
       setLoggedIn(false);
+      setUsername(''); // Clear username on logout
     }
   };
 
@@ -41,7 +44,7 @@ function App() {
         }
       };
 
-      fetchAd(); // Fetch ads on login
+      fetchAd(); // Fetch ad on login
       const interval = setInterval(fetchAd, 10000); // Fetch ads every 10 seconds
 
       return () => clearInterval(interval); // Clean up interval on component unmount
@@ -54,10 +57,10 @@ function App() {
         <Login onLogin={handleLogin} />
       ) : (
         <div>
-          <h1>Welcome, User</h1>
+          <h1>Welcome, {username}</h1>
           <button onClick={handleLogout}>Logout</button>
-          {/* Render the AdWindow component if there are ads */}
-          {ad && <AdWindow ad={ad} />}
+          {/* Render the AdWindow component if there is an ad */}
+          {ad && <AdWindow ad={ad} username={username} />}
         </div>
       )}
     </div>

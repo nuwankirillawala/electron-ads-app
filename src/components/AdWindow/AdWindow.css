@@ -1,61 +1,65 @@
-/* src/components/PopWindow/PopWindow.css */
+/* src/components/AdWindow/AdWindow.css */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f8f9fa;
+  color: #333;
+  margin: 0;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
 
-/* Styles for the container that holds the ad content */
-.pop-window-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 300px; /* Adjust width as needed */
-    height: auto;
-    padding: 20px;
-    margin: 10px;
-    border-radius: 8px;
-    background-color: #fff;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  }
-  
-  /* Styles for the ad title */
-  .pop-window-title {
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 10px;
-  }
-  
-  /* Styles for the ad description */
-  .pop-window-description {
-    font-size: 14px;
-    margin-bottom: 15px;
-  }
-  
-  /* Styles for the ad image */
-  .pop-window-image {
-    max-width: 100%;
-    height: auto;
-    border-radius: 8px;
-  }
-  
-  /* Styles for the learn more link */
-  .pop-window-link {
-    color: #007bff;
-    text-decoration: none;
-    font-size: 14px;
-  }
-  
-  /* Styles for the close button */
-  .pop-window-close-button {
-    margin-top: 15px;
-    padding: 8px 12px;
-    border: none;
-    background-color: #ff4d4d;
-    color: #fff;
-    font-size: 14px;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-  
-  .pop-window-close-button:hover {
-    background-color: #e60000;
-  }
-  
+h1 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+p {
+  font-size: 16px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+a {
+  display: inline-block;
+  padding: 10px 20px;
+  color: #007bff;
+  text-decoration: none;
+  border: 1px solid #007bff;
+  border-radius: 4px;
+  background-color: #fff;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+a:hover {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.button-container {
+  margin-top: 20px;
+}
+
+.close-button {
+  background-color: #dc3545;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.close-button:hover {
+  background-color: #c82333;
+}
