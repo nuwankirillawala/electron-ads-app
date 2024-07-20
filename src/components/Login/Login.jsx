@@ -1,4 +1,4 @@
-// src/components/Login.jsx
+// src/components/Login/Login.jsx
 import React, { useState } from 'react';
 import './Login.css'; // Import the CSS file for this component
 
@@ -17,7 +17,7 @@ const Login = ({ onLogin }) => {
     });
 
     if (response.ok) {
-      onLogin();
+      onLogin(username, password); // Pass username and password to the onLogin callback if needed
     } else {
       alert('Login failed');
     }

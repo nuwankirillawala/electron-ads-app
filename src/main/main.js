@@ -11,8 +11,8 @@ function createWindow() {
     webPreferences: {
       preload: path.join(__dirname, '../preload.js'),
       nodeIntegration: false,
-      contextIsolation: true,
-    },
+      contextIsolation: true
+    }
   });
 
   mainWindow.loadURL(`file://${path.join(__dirname, '../../public/index.html')}`);
@@ -22,6 +22,7 @@ function createWindow() {
       event.preventDefault();
       mainWindow.hide();
     }
+    return false;
   });
 
   mainWindow.on('minimize', (event) => {
@@ -39,10 +40,9 @@ app.whenReady().then(() => {
     { label: 'Quit', click: () => {
         app.isQuiting = true;
         app.quit();
-      },
-    },
+      }
+    }
   ]);
-
   tray.setToolTip('Electron App');
   tray.setContextMenu(contextMenu);
 
@@ -51,12 +51,14 @@ app.whenReady().then(() => {
   });
 
   ipcMain.on('show-ad', (event, ad) => {
+    // Create a new window for displaying the ad
     const adWindow = new BrowserWindow({
       width: 400,
       height: 300,
       webPreferences: {
         nodeIntegration: true,
-      },
+        contextIsolation: false
+      }
     });
 
     adWindow.loadURL(`data:text/html,${createAdHtml(ad)}`);
@@ -82,6 +84,7 @@ function createAdHtml(ad) {
         <h1>${ad.title}</h1>
         <p>${ad.description}</p>
         <a href="${ad.link}" target="_blank">Learn more</a>
+        <img src="${ad.image}" alt="Ad Image" style="max-width: 100%;" />
         <button onclick="window.close()">Close</button>
       </body>
     </html>

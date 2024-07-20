@@ -1,0 +1,61 @@
+/* src/components/PopWindow/PopWindow.css */
+
+/* Styles for the container that holds the ad content */
+.pop-window-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 300px; /* Adjust width as needed */
+    height: auto;
+    padding: 20px;
+    margin: 10px;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Styles for the ad title */
+  .pop-window-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  /* Styles for the ad description */
+  .pop-window-description {
+    font-size: 14px;
+    margin-bottom: 15px;
+  }
+  
+  /* Styles for the ad image */
+  .pop-window-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+  }
+  
+  /* Styles for the learn more link */
+  .pop-window-link {
+    color: #007bff;
+    text-decoration: none;
+    font-size: 14px;
+  }
+  
+  /* Styles for the close button */
+  .pop-window-close-button {
+    margin-top: 15px;
+    padding: 8px 12px;
+    border: none;
+    background-color: #ff4d4d;
+    color: #fff;
+    font-size: 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .pop-window-close-button:hover {
+    background-color: #e60000;
+  }
+  
