@@ -11,35 +11,52 @@ function createWindow() {
     webPreferences: {
       preload: path.join(__dirname, '../preload.js'),
       nodeIntegration: false,
-      contextIsolation: true
+      contextIsolation: true,
+    },
+  });
+
+  mainWindow.loadURL(`file://${path.join(__dirname, '../../public/index.html')}`);
+
+  mainWindow.on('close', (event) => {
+    if (!app.isQuiting) {
+      event.preventDefault();
+      mainWindow.hide();
     }
   });
 
-//   mainWindow.loadURL(`file://${path.join(__dirname, '../../public/index.html')}`);
-  mainWindow.loadURL(`file://${path.join(__dirname, '../../public/index.html')}`);
-
-  mainWindow.on('closed', () => {
-    mainWindow = null;
+  mainWindow.on('minimize', (event) => {
+    event.preventDefault();
+    mainWindow.hide();
   });
 }
 
-app.on('ready', () => {
+app.whenReady().then(() => {
   createWindow();
 
   tray = new Tray(path.join(__dirname, 'tray-icon.png'));
   const contextMenu = Menu.buildFromTemplate([
     { label: 'Show App', click: () => mainWindow.show() },
-    { label: 'Quit', click: () => app.quit() }
+    { label: 'Quit', click: () => {
+        app.isQuiting = true;
+        app.quit();
+      },
+    },
   ]);
+
+  tray.setToolTip('Electron App');
   tray.setContextMenu(contextMenu);
+
+  tray.on('click', () => {
+    mainWindow.show();
+  });
 
   ipcMain.on('show-ad', (event, ad) => {
     const adWindow = new BrowserWindow({
       width: 400,
       height: 300,
       webPreferences: {
-        nodeIntegration: true
-      }
+        nodeIntegration: true,
+      },
     });
 
     adWindow.loadURL(`data:text/html,${createAdHtml(ad)}`);
@@ -53,7 +70,7 @@ app.on('window-all-closed', () => {
 });
 
 app.on('activate', () => {
-  if (mainWindow === null) {
+  if (BrowserWindow.getAllWindows().length === 0) {
     createWindow();
   }
 });
