@@ -1,4 +1,4 @@
-/* src/components/AdWindow/AdWindow.css */
+/* src/components/AdWindow/AdWindow.css
 body {
   font-family: Arial, sans-serif;
   background-color: #f8f9fa;
@@ -61,5 +61,42 @@ a:hover {
 }
 
 .close-button:hover {
+  background-color: #c82333;
+} */
+.ad-window-content {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 20px;
+  max-width: 100%;
+}
+
+.ad-window-content h1 {
+  color: #333;
+}
+
+.ad-window-content p {
+  color: #555;
+}
+
+.ad-window-content img {
+  max-width: 100%;
+  height: auto;
+}
+
+.ad-window-content a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.ad-window-content .close-button {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.ad-window-content .close-button:hover {
   background-color: #c82333;
 }
