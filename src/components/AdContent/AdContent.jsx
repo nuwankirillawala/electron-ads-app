@@ -1,15 +1,15 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback } from "react";
 
 const AdContent = ({ ad, username, onClose }) => {
   const sendAdReadRequest = useCallback(async () => {
     try {
-      await fetch('http://localhost:3000/ad-read', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, adId: ad.id })
+      await fetch("http://localhost:3000/ad-read", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, adId: ad.id }),
       });
     } catch (error) {
-      console.error('Error sending ad-read request:', error);
+      console.error("Error sending ad-read request:", error);
     }
   }, [ad.id, username]);
 
@@ -19,10 +19,10 @@ const AdContent = ({ ad, username, onClose }) => {
       await sendAdReadRequest();
     };
 
-    window.addEventListener('beforeunload', handleBeforeUnload);
+    window.addEventListener("beforeunload", handleBeforeUnload);
 
     return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
+      window.removeEventListener("beforeunload", handleBeforeUnload);
     };
   }, [sendAdReadRequest]);
 
@@ -38,12 +38,16 @@ const AdContent = ({ ad, username, onClose }) => {
       <h1 style={styles.title}>{ad.title}</h1>
       <p style={styles.description}>{ad.description}</p>
       {ad.image && <img src={ad.image} alt="Ad Image" style={styles.image} />}
-      <a href={ad.link} target="_blank" rel="noopener noreferrer" style={styles.link}>Learn more</a>
+      <a
+        href={ad.link}
+        target="_blank"
+        rel="noopener noreferrer"
+        style={styles.link}
+      >
+        Learn more
+      </a>
       <div style={styles.buttonContainer}>
-        <button
-          style={styles.closeButton}
-          onClick={handleCloseButtonClick}
-        >
+        <button style={styles.closeButton} onClick={handleCloseButtonClick}>
           Close
         </button>
       </div>
@@ -53,37 +57,37 @@ const AdContent = ({ ad, username, onClose }) => {
 
 const styles = {
   container: {
-    fontFamily: 'Arial, sans-serif',
+    fontFamily: "Arial, sans-serif",
     margin: 0,
     padding: 20,
   },
   title: {
-    color: '#333',
+    color: "#333",
   },
   description: {
-    color: '#555',
+    color: "#555",
   },
   image: {
-    maxWidth: '100%',
-    height: 'auto',
+    maxWidth: "100%",
+    height: "auto",
   },
   link: {
-    color: '#007bff',
-    textDecoration: 'none',
+    color: "#007bff",
+    textDecoration: "none",
   },
   buttonContainer: {
     marginTop: 20,
   },
   closeButton: {
-    backgroundColor: '#dc3545',
-    color: 'white',
-    border: 'none',
-    padding: '10px 20px',
-    fontSize: '16px',
-    cursor: 'pointer',
+    backgroundColor: "#dc3545",
+    color: "white",
+    border: "none",
+    padding: "10px 20px",
+    fontSize: "16px",
+    cursor: "pointer",
   },
   closeButtonHover: {
-    backgroundColor: '#c82333',
+    backgroundColor: "#c82333",
   },
 };
 

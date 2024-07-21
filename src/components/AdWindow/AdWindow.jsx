@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
-import ReactDOM from 'react-dom';
-import AdContent from './AdContent';
+import React, { useEffect } from "react";
+import ReactDOM from "react-dom";
+import AdContent from "../AdContent/AdContent";
 
 const AdWindow = ({ ad, username }) => {
   useEffect(() => {
@@ -9,7 +9,7 @@ const AdWindow = ({ ad, username }) => {
       const adWindow = window.open("", "_blank", "width=400,height=300");
 
       if (adWindow) {
-        const container = adWindow.document.createElement('div');
+        const container = adWindow.document.createElement("div");
         adWindow.document.body.appendChild(container);
 
         const onClose = () => {
@@ -30,7 +30,7 @@ const AdWindow = ({ ad, username }) => {
           ReactDOM.unmountComponentAtNode(container);
         };
       } else {
-        console.error('Failed to open a new window');
+        console.error("Failed to open a new window");
       }
     }
   }, [ad, username]);

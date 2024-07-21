@@ -1,5 +1,5 @@
-const { app, BrowserWindow, Tray, Menu, ipcMain } = require('electron');
-const path = require('path');
+const { app, BrowserWindow, Tray, Menu, ipcMain } = require("electron");
+const path = require("path");
 
 let mainWindow;
 let tray;
@@ -9,15 +9,16 @@ function createWindow() {
     width: 800,
     height: 600,
     webPreferences: {
-      preload: path.join(__dirname, '../preload.js'),
+      preload: path.join(__dirname, "../preload.js"),
       nodeIntegration: false,
-      contextIsolation: true
-    }
+      contextIsolation: true,
+      // Ensure 'contextIsolation' and 'nodeIntegration' settings are as needed
+    },
   });
 
-  mainWindow.loadURL(`file://${path.join(__dirname, '../../public/index.html')}`);
+  mainWindow.loadURL("http://localhost:9000"); // Load React app URL
 
-  mainWindow.on('close', (event) => {
+  mainWindow.on("close", (event) => {
     if (!app.isQuiting) {
       event.preventDefault();
       mainWindow.hide();
@@ -25,7 +26,7 @@ function createWindow() {
     return false;
   });
 
-  mainWindow.on('minimize', (event) => {
+  mainWindow.on("minimize", (event) => {
     event.preventDefault();
     mainWindow.hide();
   });
@@ -34,44 +35,46 @@ function createWindow() {
 app.whenReady().then(() => {
   createWindow();
 
-  tray = new Tray(path.join(__dirname, 'tray-icon.png'));
+  tray = new Tray(path.join(__dirname, "tray-icon.png"));
   const contextMenu = Menu.buildFromTemplate([
-    { label: 'Show App', click: () => mainWindow.show() },
-    { label: 'Quit', click: () => {
+    { label: "Show App", click: () => mainWindow.show() },
+    {
+      label: "Quit",
+      click: () => {
         app.isQuiting = true;
         app.quit();
-      }
-    }
+      },
+    },
   ]);
-  tray.setToolTip('Electron App');
+  tray.setToolTip("Electron App");
   tray.setContextMenu(contextMenu);
 
-  tray.on('click', () => {
+  tray.on("click", () => {
     mainWindow.show();
   });
 
-  ipcMain.on('show-ad', (event, ad) => {
+  ipcMain.on("show-ad", (event, ad) => {
     // Create a new window for displaying the ad
     const adWindow = new BrowserWindow({
       width: 400,
       height: 300,
       webPreferences: {
         nodeIntegration: true,
-        contextIsolation: false
-      }
+        contextIsolation: false,
+      },
     });
 
     adWindow.loadURL(`data:text/html,${createAdHtml(ad)}`);
   });
 });
 
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
+app.on("window-all-closed", () => {
+  if (process.platform !== "darwin") {
     app.quit();
   }
 });
 
-app.on('activate', () => {
+app.on("activate", () => {
   if (BrowserWindow.getAllWindows().length === 0) {
     createWindow();
   }
