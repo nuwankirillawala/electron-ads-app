@@ -5,7 +5,7 @@ import AdContent from "../AdContent/AdContent";
 const AdWindow = ({ ad, username }) => {
   useEffect(() => {
     if (ad) {
-      // Open a new window for the ad
+      console.log(ad);
       const adWindow = window.open("", "_blank", "width=400,height=300");
 
       if (adWindow) {
@@ -25,7 +25,6 @@ const AdWindow = ({ ad, username }) => {
 
         adWindow.document.title = ad.title;
 
-        // Clean up on window close
         adWindow.onbeforeunload = () => {
           ReactDOM.unmountComponentAtNode(container);
         };
@@ -35,7 +34,7 @@ const AdWindow = ({ ad, username }) => {
     }
   }, [ad, username]);
 
-  return null; // This component does not render anything
+  return null; 
 };
 
 export default AdWindow;

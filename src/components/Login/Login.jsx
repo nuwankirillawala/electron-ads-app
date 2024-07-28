@@ -3,22 +3,22 @@ import "./Login.css"; // Import the CSS file for this component
 import { useNavigate } from "react-router-dom";
 
 const Login = ({ onLogin }) => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [Email, setEmail] = useState("");
+  const [Password, setPassword] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
     // Perform login via API
-    const response = await fetch("http://localhost:3000/login", {
+    const response = await fetch("http://localhost:5000/api/v1/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password }),
+      body: JSON.stringify({ Email, Password }),
     });
 
     if (response.ok) {
-      onLogin(username, password); // Pass username and password to the onLogin callback if needed
+      onLogin(Email, Password); // Pass username and password to the onLogin callback if needed
     } else {
       alert("Login failed");
     }
@@ -43,15 +43,15 @@ const Login = ({ onLogin }) => {
           <input
             type="text"
             id="username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            value={Email}
+            onChange={(e) => setEmail(e.target.value)}
             required
           />
           <label htmlFor="password">Password:</label>
           <input
             type="password"
             id="password"
-            value={password}
+            value={Password}
             onChange={(e) => setPassword(e.target.value)}
             required
           />
