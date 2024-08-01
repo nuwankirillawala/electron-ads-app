@@ -4,29 +4,33 @@ import "./App.css";
 import Login from "../components/Login/Login";
 import AdWindow from "../components/AdWindow/AdWindow";
 import Information from "../components/Information/Information";
+import io from "socket.io-client";
+
+// Set up the socket connection
+const socket = io("http://localhost:5000");
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [ad, setAd] = useState(null);
   const [username, setUsername] = useState("");
 
-  const handleLogin = async (username, password) => {
-    const response = await fetch("http://localhost:3000/login", {
+  const handleLogin = async (email, password) => {
+    const response = await fetch("http://localhost:5000/api/v1/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password }),
+      body: JSON.stringify({ email, password }),
     });
 
     if (response.ok) {
       setLoggedIn(true);
-      setUsername(username); // Set username on login
+      setUsername(email); // Set username on login
     } else {
       alert("Login failed"); // Provide feedback on login failure
     }
   };
 
   const handleLogout = async () => {
-    const response = await fetch("http://localhost:3000/logout", {
+    const response = await fetch("http://localhost:5000/api/v1/auth/logout", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
     });
@@ -41,21 +45,17 @@ function App() {
 
   useEffect(() => {
     if (loggedIn) {
-      const fetchAd = async () => {
-        const response = await fetch("http://localhost:3000/ads");
-        if (response.ok) {
-          const ad = await response.json();
-          console.log("Fetched Ad:", ad); // Debugging: Check if ads are fetched
-          setAd(ad);
-        } else {
-          console.error("Failed to fetch ads"); // Provide feedback on ad fetch failure
-        }
+      console.log("Setting up socket listeners");
+
+      socket.on("showPopup", (popup) => {
+        console.log("Received popup:", popup);
+        setAd(popup);
+      });
+
+      return () => {
+        console.log("Cleaning up socket listeners");
+        socket.off("showPopup");
       };
-
-      fetchAd(); // Fetch ad on login
-      const interval = setInterval(fetchAd, 10000); // Fetch ads every 10 seconds
-
-      return () => clearInterval(interval); // Clean up interval on component unmount
     }
   }, [loggedIn]);
 

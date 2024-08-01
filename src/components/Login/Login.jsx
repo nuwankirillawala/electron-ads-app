@@ -17,7 +17,7 @@ import MinimizeIcon from "@mui/icons-material/Minimize";
 import { useNavigate } from "react-router-dom";
 
 const Login = ({ onLogin }) => {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState(""); // Use "email" to be consistent
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const [serverError, setServerError] = useState(false);
@@ -27,16 +27,16 @@ const Login = ({ onLogin }) => {
     event.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:3000/login", {
+      const response = await fetch("http://localhost:5000/api/v1/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ email, password }),
       });
 
       if (response.ok) {
-        onLogin(username, password);
+        onLogin(email, password); // Pass email and password to the onLogin callback
       } else if (response.status === 401) {
-        setError("Invalid username or password. Please try again.");
+        setError("Invalid email or password. Please try again.");
       } else {
         setServerError(true);
       }
@@ -116,12 +116,12 @@ const Login = ({ onLogin }) => {
         </Typography>
         <form onSubmit={handleSubmit}>
           <TextField
-            label="Username"
+            label="Email"
             variant="outlined"
             fullWidth
             required
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             sx={{ mb: 2 }}
           />
           <TextField
