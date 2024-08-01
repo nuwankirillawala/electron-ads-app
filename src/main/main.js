@@ -6,13 +6,13 @@ let tray;
 
 function createWindow() {
   mainWindow = new BrowserWindow({
+    titleBarStyle: "hidden",
     width: 800,
     height: 600,
     webPreferences: {
       preload: path.join(__dirname, "../preload.js"),
       nodeIntegration: false,
       contextIsolation: true,
-      // Ensure 'contextIsolation' and 'nodeIntegration' settings are as needed
     },
   });
 
@@ -51,6 +51,15 @@ app.whenReady().then(() => {
 
   tray.on("click", () => {
     mainWindow.show();
+  });
+
+  ipcMain.on("minimize-window", () => {
+    mainWindow.minimize();
+  });
+
+  ipcMain.on("close-window", () => {
+    app.isQuiting = true;
+    app.quit();
   });
 
   ipcMain.on("show-ad", (event, ad) => {

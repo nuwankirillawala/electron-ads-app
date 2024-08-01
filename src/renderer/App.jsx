@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Routes, Route, Link } from "react-router-dom";
 import "./App.css";
 import Login from "../components/Login/Login";
-import AdWindow from "../components/AdWindow/AdWindow"; // Import the AdWindow component
-import Information from "../components/Information/Information"; // Import the Information component
+import AdWindow from "../components/AdWindow/AdWindow";
+import Information from "../components/Information/Information";
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
