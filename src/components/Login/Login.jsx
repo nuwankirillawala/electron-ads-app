@@ -14,14 +14,13 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import MinimizeIcon from "@mui/icons-material/Minimize";
-import { useNavigate } from "react-router-dom";
+import logo from "../../../public/assets/images/logo.png"; // Adjust path as needed
 
 const Login = ({ onLogin }) => {
   const [email, setEmail] = useState(""); // Use "email" to be consistent
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const [serverError, setServerError] = useState(false);
-  const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -49,20 +48,24 @@ const Login = ({ onLogin }) => {
     alert("Please contact your administration.");
   };
 
-  const handleInformationClick = () => {
-    navigate("/information");
-  };
-
   const handleCloseErrorDialog = () => {
     setServerError(false);
   };
 
   const handleMinimize = () => {
-    window.electron.ipcRenderer.send("minimize-window");
+    if (window.electron && window.electron.minimizeWindow) {
+      window.electron.minimizeWindow();
+    } else {
+      console.error("Electron IPC context not available");
+    }
   };
 
   const handleClose = () => {
-    window.electron.ipcRenderer.send("close-window");
+    if (window.electron && window.electron.closeWindow) {
+      window.electron.closeWindow();
+    } else {
+      console.error("Electron IPC context not available");
+    }
   };
 
   return (
@@ -95,12 +98,28 @@ const Login = ({ onLogin }) => {
           <CloseIcon />
         </IconButton>
       </Box>
-      <Typography variant="h4" align="center" gutterBottom>
-        ElectroFact Portal
-      </Typography>
-      <Typography variant="subtitle1" align="center" gutterBottom>
-        By Fantasia Group
-      </Typography>
+
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          mb: 4,
+        }}
+      >
+        <img
+          src={logo}
+          alt="Logo"
+          style={{ width: "100px", marginBottom: "1rem" }}
+        />
+        <Typography variant="h4" align="center">
+          ElectroFact Portal
+        </Typography>
+        <Typography variant="subtitle1" align="center">
+          By Fantasia Group
+        </Typography>
+      </Box>
+
       <Box
         sx={{
           p: 3,

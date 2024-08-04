@@ -3,20 +3,20 @@ const path = require("path");
 
 let mainWindow;
 let tray;
+let adWindows = [];
 
-function createWindow() {
+function createMainWindow() {
   mainWindow = new BrowserWindow({
-    titleBarStyle: "hidden",
     width: 800,
     height: 600,
     webPreferences: {
-      preload: path.join(__dirname, "../preload.js"),
+      preload: path.join(__dirname, "preload.js"),
       nodeIntegration: false,
       contextIsolation: true,
     },
   });
 
-  mainWindow.loadURL("http://localhost:9000"); // Load React app URL
+  mainWindow.loadURL("http://localhost:9000/"); // Load the React app URL
 
   mainWindow.on("close", (event) => {
     if (!app.isQuiting) {
@@ -32,8 +32,31 @@ function createWindow() {
   });
 }
 
+function createAdWindow(ad) {
+  const adWindow = new BrowserWindow({
+    width: 600,
+    height: 600,
+    webPreferences: {
+      preload: path.join(__dirname, "preload.js"),
+      nodeIntegration: false,
+      contextIsolation: true,
+    },
+  });
+
+  adWindow.loadURL("http://localhost:9000/"); // Load the React app URL
+  adWindow.webContents.on("did-finish-load", () => {
+    adWindow.webContents.send("navigate-to-ad-window", ad); // Send IPC message
+  });
+
+  adWindow.on("closed", () => {
+    adWindows = adWindows.filter((win) => win !== adWindow);
+  });
+
+  adWindows.push(adWindow);
+}
+
 app.whenReady().then(() => {
-  createWindow();
+  createMainWindow();
 
   tray = new Tray(path.join(__dirname, "tray-icon.png"));
   const contextMenu = Menu.buildFromTemplate([
@@ -53,6 +76,10 @@ app.whenReady().then(() => {
     mainWindow.show();
   });
 
+  ipcMain.on("show-ad", (event, ad) => {
+    createAdWindow(ad); // Create and show the ad window
+  });
+
   ipcMain.on("minimize-window", () => {
     mainWindow.minimize();
   });
@@ -60,20 +87,6 @@ app.whenReady().then(() => {
   ipcMain.on("close-window", () => {
     app.isQuiting = true;
     app.quit();
-  });
-
-  ipcMain.on("show-ad", (event, ad) => {
-    // Create a new window for displaying the ad
-    const adWindow = new BrowserWindow({
-      width: 400,
-      height: 300,
-      webPreferences: {
-        nodeIntegration: true,
-        contextIsolation: false,
-      },
-    });
-
-    adWindow.loadURL(`data:text/html,${createAdHtml(ad)}`);
   });
 });
 
@@ -85,20 +98,6 @@ app.on("window-all-closed", () => {
 
 app.on("activate", () => {
   if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow();
+    createMainWindow();
   }
 });
-
-function createAdHtml(ad) {
-  return `
-    <html>
-      <body>
-        <h1>${ad.title}</h1>
-        <p>${ad.description}</p>
-        <a href="${ad.link}" target="_blank">Learn more</a>
-        <img src="${ad.image}" alt="Ad Image" style="max-width: 100%;" />
-        <button onclick="window.close()">Close</button>
-      </body>
-    </html>
-  `;
-}

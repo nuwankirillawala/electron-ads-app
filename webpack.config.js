@@ -1,12 +1,12 @@
 const path = require("path");
 
 module.exports = {
-  mode: "development", // or 'production'
+  mode: "development", // Change to 'production' for production build
   entry: "./src/renderer/index.jsx",
   output: {
     path: path.resolve(__dirname, "dist"),
     filename: "bundle.js",
-    publicPath: "/", // Ensure Webpack Dev Server serves files from the root
+    publicPath: "/", // Serves files from the root
   },
   module: {
     rules: [
@@ -21,13 +21,14 @@ module.exports = {
         },
       },
       {
-        test: /\.(png|jpg|gif)$/,
+        test: /\.(png|jpg|jpeg|gif|svg)$/i,
         use: [
           {
             loader: "file-loader",
             options: {
               name: "[name].[ext]",
               outputPath: "assets/images",
+              publicPath: "assets/images",
             },
           },
         ],
@@ -46,7 +47,10 @@ module.exports = {
       directory: path.join(__dirname, "public"), // Serve from 'public'
     },
     port: 9000, // Port for Webpack Dev Server
-    historyApiFallback: true, // Enable client-side routing
+    historyApiFallback: {
+      index: "/index.html", // Ensure that index.html is served for all routes
+    },
+    hot: true, // Enable hot reloading
   },
   target: "web", // Target web for Webpack Dev Server
 };
