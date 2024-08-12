@@ -12,11 +12,14 @@ import {
   DialogActions,
   IconButton,
 } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import CloseIcon from "@mui/icons-material/Close";
 import MinimizeIcon from "@mui/icons-material/Minimize";
-import logo from "../../../public/assets/images/logo.png"; // Adjust path as needed
+import logo from "../../../public/assets/images/logo.png";
+import dashboard from "../../../public/assets/images/mocks/dashboard_mock.png"; // Adjust path as needed
 
 const Login = ({ onLogin }) => {
+  const theme = useTheme();
   const [email, setEmail] = useState(""); // Use "email" to be consistent
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
@@ -69,128 +72,175 @@ const Login = ({ onLogin }) => {
   };
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        minHeight: "100vh",
-        p: 2,
-        backgroundColor: "#f5f5f5",
-      }}
-    >
+    <Box sx={{ display: "flex", height: "100vh" }}>
       <Box
         sx={{
-          position: "absolute",
-          top: 0,
-          right: 0,
-          p: 1,
+          flex: 0.9,
+          // backgroundColor: theme.palette.background.lightBlueLavender,
           display: "flex",
-          justifyContent: "flex-end",
-          width: "100%",
-        }}
-      >
-        <IconButton onClick={handleMinimize}>
-          <MinimizeIcon />
-        </IconButton>
-        <IconButton onClick={handleClose}>
-          <CloseIcon />
-        </IconButton>
-      </Box>
-
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
           alignItems: "center",
-          mb: 4,
+          justifyContent: "center",
         }}
       >
-        <img
-          src={logo}
-          alt="Logo"
-          style={{ width: "100px", marginBottom: "1rem" }}
-        />
-        <Typography variant="h4" align="center">
-          ElectroFact Portal
-        </Typography>
-        <Typography variant="subtitle1" align="center">
-          By Fantasia Group
-        </Typography>
+        <Box
+          sx={{
+            width: "100%",
+            height: "100%",
+            // backgroundImage: dashboard, // Add your left-side image here
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            marginLeft: -20,
+            paddingTop: 10,
+          }}
+        >
+          <img
+            src={dashboard}
+            alt="dashboard"
+            style={{ marginBottom: "1rem" }}
+          />
+        </Box>
       </Box>
-
       <Box
         sx={{
-          p: 3,
-          borderRadius: 1,
-          boxShadow: 3,
-          backgroundColor: "white",
-          maxWidth: 400,
-          width: "100%",
+          flex: 1.1,
+          // backgroundColor: theme.palette.background.lightBlueLavender,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
         }}
       >
-        <Typography variant="h5" align="center" gutterBottom>
-          Sign In
-        </Typography>
-        <form onSubmit={handleSubmit}>
-          <TextField
-            label="Email"
-            variant="outlined"
-            fullWidth
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            sx={{ mb: 2 }}
-          />
-          <TextField
-            label="Password"
-            type="password"
-            variant="outlined"
-            fullWidth
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            sx={{ mb: 2 }}
-          />
-          {error && (
-            <Typography color="error" sx={{ mb: 2 }}>
-              {error}
-            </Typography>
-          )}
-          <Button type="submit" variant="contained" color="primary" fullWidth>
-            Login
-          </Button>
-        </form>
-        <Link
-          component="button"
-          variant="body2"
-          onClick={handleForgotPassword}
-          sx={{ display: "block", mt: 2, textAlign: "center", color: "purple" }}
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            minHeight: "100vh",
+            p: 2,
+            // backgroundColor: "#f5f5f5",
+          }}
         >
-          Forgot Password?
-        </Link>
-      </Box>
-      <Box mt={2}>
-        <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
-          Powered by Fantasia App Solutions
-        </Typography>
-      </Box>
+          <Box
+            sx={{
+              position: "absolute",
+              top: 0,
+              right: 0,
+              p: 0.5,
+              display: "flex",
+              justifyContent: "flex-end",
+              width: "100%",
+            }}
+          >
+            <IconButton onClick={handleMinimize}>
+              <MinimizeIcon />
+            </IconButton>
+            <IconButton onClick={handleClose}>
+              <CloseIcon />
+            </IconButton>
+          </Box>
 
-      <Dialog open={serverError} onClose={handleCloseErrorDialog}>
-        <DialogTitle>Error</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Unable to connect to the server. Please check your internet
-            connection.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseErrorDialog} color="primary">
-            OK
-          </Button>
-        </DialogActions>
-      </Dialog>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              mb: 4,
+            }}
+          >
+            <img
+              src={logo}
+              alt="Logo"
+              style={{ width: "100px", marginBottom: "1rem" }}
+            />
+            <Typography
+              variant="h4"
+              align="left"
+              sx={{ marginBottom: "0.5rem" }}
+            >
+              Welcome 👋
+            </Typography>
+            <Typography variant="body2" align="left" sx={{ color: "gray" }}>
+              Please login here
+            </Typography>
+          </Box>
+
+          <Box
+            sx={{
+              p: 1,
+              maxWidth: 400,
+              width: "100%",
+            }}
+          >
+            <form onSubmit={handleSubmit}>
+              <TextField
+                label="Email"
+                variant="outlined"
+                fullWidth
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                sx={{ mb: 2 }}
+              />
+              <TextField
+                label="Password"
+                type="password"
+                variant="outlined"
+                fullWidth
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                sx={{ mb: 1 }}
+              />
+              {error && (
+                <Typography color="error" sx={{ mb: 1 }}>
+                  {error}
+                </Typography>
+              )}
+              <Link
+                component="button"
+                variant="body2"
+                onClick={handleForgotPassword}
+                sx={{
+                  display: "block",
+                  mt: 2,
+                  textAlign: "center",
+                  color: "purple",
+                }}
+              >
+                Forgot Password?
+              </Link>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                fullWidth
+              >
+                Login
+              </Button>
+            </form>
+          </Box>
+          <Box mt={2}>
+            <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
+              Powered by Fantasia App Solutions
+            </Typography>
+          </Box>
+
+          <Dialog open={serverError} onClose={handleCloseErrorDialog}>
+            <DialogTitle>Error</DialogTitle>
+            <DialogContent>
+              <DialogContentText>
+                Unable to connect to the server. Please check your internet
+                connection.
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleCloseErrorDialog} color="primary">
+                OK
+              </Button>
+            </DialogActions>
+          </Dialog>
+        </Box>
+      </Box>
     </Box>
   );
 };
