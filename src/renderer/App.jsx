@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
-import { Container, Typography, Button, Paper } from "@mui/material";
+import { Container, CircularProgress, Box } from "@mui/material";
 import Login from "../components/Login/Login";
 import Information from "../components/Information/Information";
 import AdWindow from "../components/AdWindow/AdWindow";
+import Home from "../components/Home/Home"; // Import the Home component
 import io from "socket.io-client";
+import sampleAd from "../../public/assets/images/sample-ad.jpg";
 
 // Create a socket instance
 const socket = io("http://localhost:5000");
@@ -12,14 +14,43 @@ const socket = io("http://localhost:5000");
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [username, setUsername] = useState("");
+  const [user, setUser] = useState({});
+  const [loading, setLoading] = useState(true); // Add loading state
   const navigate = useNavigate();
   const [ad, setAd] = useState();
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1000); // Set loading to false after 1 second
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    if (window.electron) {
+      const handleAutoLogin = (event, user) => {
+        setUsername(user.email);
+        setUser(user);
+        setLoggedIn(true);
+        setLoading(false);
+      };
+
+      window.electron.on("auto-login", handleAutoLogin);
+
+      return () => {
+        window.electron.off("auto-login", handleAutoLogin);
+      };
+    }
+  }, []);
 
   useEffect(() => {
     if (loggedIn) {
       const handleAdData = (adData) => {
         console.log("Received ad data:", adData);
-        window.electron.showAd(adData); // Notify the main process to show the ad
+        if (window.electron) {
+          window.electron.showAd(adData); // Notify the main process to show the ad
+        }
       };
 
       socket.on("showPopup", handleAdData);
@@ -31,31 +62,27 @@ function App() {
   }, [loggedIn]);
 
   useEffect(() => {
-    const handleNavigateToAdWindow = (event, adData) => {
-      setAd(adData);
-      navigate("/ad-window");
-      // Pass ad data to the AdWindow component via state or context if needed
-    };
+    if (window.electron) {
+      const handleNavigateToAdWindow = (event, adData) => {
+        setAd(adData);
+        navigate("/ad-window");
+        // Pass ad data to the AdWindow component via state or context if needed
+      };
 
-    window.electron.on("navigate-to-ad-window", handleNavigateToAdWindow);
+      window.electron.on("navigate-to-ad-window", handleNavigateToAdWindow);
 
-    return () => {
-      window.electron.off("navigate-to-ad-window", handleNavigateToAdWindow);
-    };
+      return () => {
+        window.electron.off("navigate-to-ad-window", handleNavigateToAdWindow);
+      };
+    }
   }, [navigate]);
 
-  const handleLogin = async (email, password) => {
-    const response = await fetch("http://localhost:5000/api/v1/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
-
-    if (response.ok) {
-      setLoggedIn(true);
-      setUsername(email);
-    } else {
-      alert("Login failed");
+  const handleLogin = (user) => {
+    setLoggedIn(true);
+    setUser(user);
+    setUsername(user.email);
+    if (window.electron) {
+      window.electron.saveUserData(user); // Save user data on successful login
     }
   };
 
@@ -68,6 +95,9 @@ function App() {
     if (response.ok) {
       setLoggedIn(false);
       setUsername("");
+      if (window.electron) {
+        window.electron.clearUserData(); // Clear user data on logout
+      }
     } else {
       alert("Logout failed");
     }
@@ -75,13 +105,17 @@ function App() {
 
   const showDummyAd = () => {
     const dummyAd = {
-      title: "Dummy Ad",
-      description: "This is a dummy ad for testing.",
-      image: "https://via.placeholder.com/150",
+      title: "Test Popup Fact",
+      description: "This is a dummy fact for testing.",
+      image: sampleAd,
+      // image: "https://via.placeholder.com/150",
       link: "https://www.example.com",
+      windowSize: "normal",
     };
     console.log("called show dummy add");
-    window.electron.showAd(dummyAd); // Notify the main process to show the dummy ad
+    if (window.electron) {
+      window.electron.showAd(dummyAd); // Notify the main process to show the dummy ad
+    }
   };
 
   return (
@@ -90,29 +124,25 @@ function App() {
         <Route
           path="/"
           element={
-            !loggedIn ? (
+            loading ? (
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: "100vh",
+                }}
+              >
+                <CircularProgress color="inherit" />
+              </Box>
+            ) : !loggedIn ? (
               <Login onLogin={handleLogin} />
             ) : (
-              <Paper elevation={3} sx={{ padding: 3, textAlign: "center" }}>
-                <Typography variant="h4" gutterBottom>
-                  Welcome, {username}
-                </Typography>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={handleLogout}
-                >
-                  Logout
-                </Button>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={showDummyAd}
-                  sx={{ marginTop: 2 }}
-                >
-                  Show Dummy Ad
-                </Button>
-              </Paper>
+              <Home
+                username={user}
+                onLogout={handleLogout}
+                onShowDummyAd={showDummyAd}
+              />
             )
           }
         />
