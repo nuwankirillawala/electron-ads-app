@@ -81,9 +81,10 @@ const AdWindow = ({ adData }) => {
           alt="Ad"
           style={{
             maxWidth: "100%",
-            height: "auto",
+            height: "300px",
             display: "block",
             marginBottom: 16,
+            objectFit: "contain",
           }}
         />
       )}
