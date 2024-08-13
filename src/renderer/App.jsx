@@ -106,7 +106,7 @@ function App() {
   const showDummyAd = () => {
     const dummyAd = {
       title: "Test Popup Fact",
-      description: "This is a dummy fact for testing.",
+      message: "This is a dummy fact for testing.",
       image: sampleAd,
       // image: "https://via.placeholder.com/150",
       link: "https://www.example.com",

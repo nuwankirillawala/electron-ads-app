@@ -3,6 +3,8 @@ const path = require("path");
 const fs = require("fs");
 const crypto = require("crypto");
 
+const isDev = process.env.NODE_ENV === "development";
+
 let mainWindow;
 let tray;
 let adWindows = [];
@@ -60,6 +62,9 @@ function clearUserData() {
 
 function createMainWindow() {
   const iconPath = path.join(__dirname, "../../public/assets/images/icon.png");
+  const startUrl = isDev
+    ? "http://localhost:9000/"
+    : `file://${path.join(__dirname, "../../dist/index.html")}`;
 
   mainWindow = new BrowserWindow({
     width: 800,
@@ -73,10 +78,8 @@ function createMainWindow() {
     },
   });
 
-  // Load the index.html file from the 'public' folder
-  // const startUrl = `file://${path.join(__dirname, "../../public/index.html")}`;
-  // mainWindow.loadURL(startUrl);
-  mainWindow.loadURL("http://localhost:9000/"); // Load the React app URL
+  mainWindow.loadURL(startUrl);
+
   mainWindow.on("close", (event) => {
     if (!app.isQuiting) {
       event.preventDefault();
@@ -103,8 +106,7 @@ function createAdWindow(ad) {
     },
   });
 
-  // adWindow.loadURL(`file://${path.join(__dirname, "../../public/index.html")}`);
-  adWindow.loadURL("http://localhost:9000/");
+  adWindow.loadURL(startUrl);
   adWindow.webContents.on("did-finish-load", () => {
     adWindow.webContents.send("navigate-to-ad-window", ad);
   });
@@ -131,8 +133,7 @@ function createFullAdWindow(ad) {
     },
   });
 
-  // adWindow.loadURL(`file://${path.join(__dirname, "../../public/index.html")}`);
-  adWindow.loadURL("http://localhost:9000/");
+  adWindow.loadURL(startUrl);
   adWindow.webContents.on("did-finish-load", () => {
     adWindow.webContents.send("navigate-to-ad-window", ad);
   });

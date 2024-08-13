@@ -32,7 +32,7 @@ const Home = ({ user, onLogout, onShowDummyAd }) => {
       {/* Header */}
       <Box
         sx={{
-          p: 1,
+          p: 0.25,
           display: "flex",
           justifyContent: "flex-end",
           width: "100%",
@@ -60,7 +60,6 @@ const Home = ({ user, onLogout, onShowDummyAd }) => {
             </Button>
           </Paper>
         </Grid>
-        {/* More Grid items for other cards can be uncommented and used here */}
       </Grid>
 
       {/* Footer */}

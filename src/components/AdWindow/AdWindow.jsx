@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Typography, Button, IconButton, Box } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import ThumbUpIcon from "@mui/icons-material/ThumbUp";
+import ThumbDownIcon from "@mui/icons-material/ThumbDown";
+import FavoriteIcon from "@mui/icons-material/Favorite";
 
 const AdWindow = ({ adData }) => {
   const [ad, setAd] = useState(null);
@@ -89,41 +92,38 @@ const AdWindow = ({ adData }) => {
         />
       )}
       <Typography variant="body1" paragraph sx={{ textAlign: "center" }}>
-        {ad.description}
+        {ad.message}
       </Typography>
       <Box
         sx={{ display: "flex", justifyContent: "center", gap: 2, marginTop: 2 }}
       >
-        <Button
-          variant={selectedReaction === "like" ? "contained" : "outlined"}
-          color="primary"
+        <IconButton
+          color={selectedReaction === "like" ? "primary" : "default"}
           onClick={() => handleReactionClick("like")}
         >
-          👍
-        </Button>
-        <Button
-          variant={selectedReaction === "dislike" ? "contained" : "outlined"}
-          color="primary"
+          <ThumbUpIcon />
+        </IconButton>
+        <IconButton
+          color={selectedReaction === "dislike" ? "warning" : "default"}
           onClick={() => handleReactionClick("dislike")}
         >
-          👎
-        </Button>
-        <Button
-          variant={selectedReaction === "heart" ? "contained" : "outlined"}
-          color="primary"
+          <ThumbDownIcon />
+        </IconButton>
+        <IconButton
+          color={selectedReaction === "heart" ? "error" : "default"}
           onClick={() => handleReactionClick("heart")}
         >
-          ❤️
-        </Button>
+          <FavoriteIcon />
+        </IconButton>
       </Box>
-      <Button
+      {/* <Button
         variant="outlined"
         color="secondary"
         onClick={() => window.close()}
         sx={{ marginTop: 4 }}
       >
         Close
-      </Button>
+      </Button> */}
     </Box>
   );
 };

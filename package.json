@@ -1,7 +1,7 @@
 {
   "name": "electron-pop-app",
   "version": "1.0.0",
-  "description": "Electron App for Poping Messages",
+  "description": "Electron App for Popping Messages",
   "main": "src/main/main.js",
   "scripts": {
     "start": "electron .",
@@ -18,6 +18,7 @@
     "@mui/icons-material": "^5.16.5",
     "@mui/material": "^5.16.5",
     "axios": "^1.7.2",
+    "dotenv": "^16.4.5",
     "path-browserify": "^1.0.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -29,15 +30,42 @@
     "@babel/preset-env": "^7.24.8",
     "@babel/preset-react": "^7.24.7",
     "babel-loader": "^9.1.3",
+    "clean-webpack-plugin": "^4.0.0",
     "concurrently": "^8.2.2",
     "css-loader": "^7.1.2",
     "electron": "^31.2.1",
     "electron-builder": "^24.13.3",
     "file-loader": "^6.2.0",
+    "html-webpack-plugin": "^5.5.0",
     "rimraf": "^5.0.9",
     "style-loader": "^4.0.0",
     "webpack": "^5.93.0",
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^5.0.4"
+  },
+  "build": {
+    "appId": "com.electronpopapp.app",
+    "productName": "ElectronPopApp",
+    "files": [
+      "dist/**/*",
+      "src/main/**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "public/assets/",
+        "to": "assets/",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "public/assets/images/icon.png"
+    },
+    "mac": {
+      "target": "dmg",
+      "icon": "public/assets/images/icon.png"
+    }
   }
 }

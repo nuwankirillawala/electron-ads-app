@@ -1,12 +1,14 @@
 const path = require("path");
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
-  mode: "development", // Change to 'production' for production build
+  mode: "production", // Change mode to 'production'
   entry: "./src/renderer/index.jsx",
   output: {
     path: path.resolve(__dirname, "dist"),
     filename: "bundle.js",
-    publicPath: "/", // Serves files from the root
+    publicPath: "./", // Adjust for relative paths in production
   },
   module: {
     rules: [
@@ -26,7 +28,7 @@ module.exports = {
           {
             loader: "file-loader",
             options: {
-              name: "[name].[ext]",
+              name: "[name].[contenthash].[ext]",
               outputPath: "assets/images",
               publicPath: "assets/images",
             },
@@ -42,15 +44,15 @@ module.exports = {
   resolve: {
     extensions: [".js", ".jsx"],
   },
-  devServer: {
-    static: {
-      directory: path.join(__dirname, "public"), // Serve from 'public'
-    },
-    port: 9000, // Port for Webpack Dev Server
-    historyApiFallback: {
-      index: "/index.html", // Ensure that index.html is served for all routes
-    },
-    hot: true, // Enable hot reloading
-  },
-  target: "web", // Target web for Webpack Dev Server
+  plugins: [
+    new CleanWebpackPlugin(), // Cleans the dist folder before each build
+    new HtmlWebpackPlugin({
+      template: "./public/index.html", // Use your index.html as a template
+      minify: {
+        removeComments: true,
+        collapseWhitespace: true,
+      },
+    }),
+  ],
+  target: "electron-renderer", // Target Electron Renderer process
 };
