@@ -83,7 +83,6 @@
         }
       ],
       "icon": "public/assets/images/icon.icns",
-      "background": "public/assets/images/dmg-background.png",
       "title": "${productName} ${version}"
     }
   }

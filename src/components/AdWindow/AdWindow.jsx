@@ -22,12 +22,12 @@ const AdWindow = ({ adData }) => {
       window.electron.off("show-ad", handleShowAd);
     };
   }, []);
-
+  
   const handleReactionClick = async (reactionType) => {
     if (ad) {
       setSelectedReaction(reactionType);
       try {
-        const response = await fetch("http://localhost:5000/api/v1/reaction", {
+        const response = await fetch("https://hr-app-api-n2c1.onrender.com/api/v1/reaction", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
