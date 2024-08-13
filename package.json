@@ -7,7 +7,7 @@
     "start": "electron .",
     "react-start": "webpack serve --config webpack.config.js",
     "electron-start": "electron .",
-    "build": "webpack && electron-builder",
+    "build": "webpack --mode production && electron-builder",
     "clean": "rimraf dist"
   },
   "author": "nuwan.kirillawala",
@@ -48,7 +48,8 @@
     "productName": "ElectronPopApp",
     "files": [
       "dist/**/*",
-      "src/main/**/*"
+      "src/main/**/*",
+      "public/**/*"
     ],
     "extraResources": [
       {
@@ -65,7 +66,25 @@
     },
     "mac": {
       "target": "dmg",
-      "icon": "public/assets/images/icon.png"
+      "icon": "public/assets/images/icon.icns",
+      "category": "public.app-category.utilities"
+    },
+    "dmg": {
+      "contents": [
+        {
+          "x": 130,
+          "y": 220
+        },
+        {
+          "x": 410,
+          "y": 220,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ],
+      "icon": "public/assets/images/icon.icns",
+      "background": "public/assets/images/dmg-background.png",
+      "title": "${productName} ${version}"
     }
   }
 }
