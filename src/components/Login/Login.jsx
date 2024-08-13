@@ -100,6 +100,16 @@ const Login = ({ onLogin }) => {
           />
         </Box>
       </Box>
+
+      {/* Separation Line */}
+      <Box
+        sx={{
+          width: "0.25%",
+          height: "90%",
+          backgroundColor: theme.palette.background.lightBlueLavender,
+          mr: "20px",
+        }}
+      />
       <Box
         sx={{
           flex: 1.1,
@@ -221,7 +231,7 @@ const Login = ({ onLogin }) => {
           </Box>
           <Box mt={2}>
             <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
-              Powered by Fantasia App Solutions
+              Powered by NuraIT x Ceyapps
             </Typography>
           </Box>
 
