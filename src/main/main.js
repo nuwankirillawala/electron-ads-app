@@ -3,7 +3,8 @@ const path = require("path");
 const fs = require("fs");
 const crypto = require("crypto");
 
-const isDev = process.env.NODE_ENV === "development";
+// const isDev = process.env.NODE_ENV === "development";
+const isDev = false;
 
 let mainWindow;
 let tray;
