@@ -3,7 +3,8 @@ const path = require("path");
 const fs = require("fs");
 const crypto = require("crypto");
 
-const isDev = process.env.NODE_ENV === "development";
+// const isDev = process.env.NODE_ENV === "development";
+const isDev = false;
 
 let mainWindow;
 let tray;
@@ -63,7 +64,7 @@ function clearUserData() {
 function createMainWindow() {
   const iconPath = path.join(__dirname, "../../public/assets/images/icon.png");
   const startUrl = isDev
-    ? "http://localhost:9000/"
+    ? `file://${path.join(__dirname, "../../public/index.html")}`
     : `file://${path.join(__dirname, "../../dist/index.html")}`;
 
   mainWindow = new BrowserWindow({
@@ -78,7 +79,7 @@ function createMainWindow() {
     },
   });
 
-  mainWindow.loadURL(startUrl);
+  mainWindow.loadURL(`file://${path.join(__dirname, "../../dist/index.html")}`);
 
   mainWindow.on("close", (event) => {
     if (!app.isQuiting) {
@@ -99,6 +100,7 @@ function createAdWindow(ad) {
     width: 800,
     height: 600,
     frame: false,
+    alwaysOnTop: true,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       nodeIntegration: false,
@@ -106,7 +108,7 @@ function createAdWindow(ad) {
     },
   });
 
-  adWindow.loadURL(startUrl);
+  adWindow.loadURL(`file://${path.join(__dirname, "../../dist/index.html")}`);
   adWindow.webContents.on("did-finish-load", () => {
     adWindow.webContents.send("navigate-to-ad-window", ad);
   });
@@ -126,6 +128,7 @@ function createFullAdWindow(ad) {
     width,
     height,
     frame: false,
+    alwaysOnTop: true,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       nodeIntegration: false,
@@ -133,7 +136,7 @@ function createFullAdWindow(ad) {
     },
   });
 
-  adWindow.loadURL(startUrl);
+  adWindow.loadURL(`file://${path.join(__dirname, "../../dist/index.html")}`);
   adWindow.webContents.on("did-finish-load", () => {
     adWindow.webContents.send("navigate-to-ad-window", ad);
   });
