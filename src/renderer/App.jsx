@@ -87,10 +87,13 @@ function App() {
   };
 
   const handleLogout = async () => {
-    const response = await fetch("https://hr-app-api-n2c1.onrender.com/api/v1/auth/logout", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-    });
+    const response = await fetch(
+      "https://hr-app-api-n2c1.onrender.com/api/v1/auth/logout",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      }
+    );
 
     if (response.ok) {
       setLoggedIn(false);
@@ -105,6 +108,7 @@ function App() {
 
   const showDummyAd = () => {
     const dummyAd = {
+      _id: "66ba3da6edfdd991ebb6a94d",
       title: "Test Popup Fact",
       message: "This is a dummy fact for testing.",
       image: sampleAd,

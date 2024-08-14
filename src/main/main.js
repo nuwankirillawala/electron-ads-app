@@ -2,6 +2,7 @@ const { app, BrowserWindow, Tray, Menu, ipcMain, screen } = require("electron");
 const path = require("path");
 const fs = require("fs");
 const crypto = require("crypto");
+const AutoLaunch = require("auto-launch"); // Add this line
 
 // const isDev = process.env.NODE_ENV === "development";
 const isDev = false;
@@ -79,7 +80,7 @@ function createMainWindow() {
     },
   });
 
-  mainWindow.loadURL(`file://${path.join(__dirname, "../../dist/index.html")}`);
+  mainWindow.loadURL(startUrl);
 
   mainWindow.on("close", (event) => {
     if (!app.isQuiting) {
@@ -148,8 +149,26 @@ function createFullAdWindow(ad) {
   adWindows.push(adWindow);
 }
 
+// Auto-launch setup
+const appAutoLauncher = new AutoLaunch({
+  name: "YourAppName", // Replace with your app's name
+  path: app.getPath("exe"), // Path to the executable
+});
+
 app.whenReady().then(() => {
   createMainWindow();
+
+  // Enable auto-launch
+  appAutoLauncher
+    .isEnabled()
+    .then((isEnabled) => {
+      if (!isEnabled) {
+        appAutoLauncher.enable();
+      }
+    })
+    .catch((err) => {
+      console.error("Auto-launch error:", err);
+    });
 
   tray = new Tray(path.join(__dirname, "../../public/assets/images/icon.png"));
   const contextMenu = Menu.buildFromTemplate([
@@ -202,6 +221,11 @@ app.whenReady().then(() => {
       mainWindow.webContents.send("auto-login", savedUser);
     });
   }
+});
+
+app.on("before-quit", () => {
+  // Perform cleanup or other tasks before the app quits
+  console.log("App is quitting...");
 });
 
 app.on("window-all-closed", () => {

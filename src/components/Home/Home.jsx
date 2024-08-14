@@ -55,9 +55,9 @@ const Home = ({ user, onLogout, onShowDummyAd }) => {
               Welcome{user && user.firstName ? `, ${user.firstName}` : ""}
             </Typography>
 
-            <Button variant="contained" color="primary" onClick={onShowDummyAd}>
+            {/* <Button variant="contained" color="primary" onClick={onShowDummyAd}>
               Show Dummy Ad
-            </Button>
+            </Button> */}
           </Paper>
         </Grid>
       </Grid>
