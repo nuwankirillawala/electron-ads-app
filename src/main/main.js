@@ -3,9 +3,11 @@ const path = require("path");
 const fs = require("fs");
 const crypto = require("crypto");
 const AutoLaunch = require("auto-launch"); // Add this line
+// const { session } = require("electron");
+// const axios = require("axios");
 
 // const isDev = process.env.NODE_ENV === "development";
-const isDev = false;
+const isDev = true;
 
 let mainWindow;
 let tray;
@@ -37,7 +39,39 @@ function decrypt(text) {
   return decrypted;
 }
 
-function saveUserData(user) {
+async function saveUserData(user) {
+  console.log("saving user data");
+
+  // set the cookies - session
+  // const cookie = {
+  //   url: "http://localhost:5000/api/v1/",
+  //   name: "jwt",
+  //   value: user.token,
+  //   sameSite: "strict",
+  // };
+  // console.log("Cookie", cookie);
+
+  // try {
+  //   await session.defaultSession.cookies.set(cookie);
+  //   console.log("Cookie set successfully");
+  // } catch (error) {
+  //   console.error("Failed to set cookie:", error);
+  // }
+
+  // Override the user data
+  // const userResponse = await axios.get(
+  //   "http://localhost:5000/api/v1/auth/profile",
+  //   {
+  //     withCredentials: true,
+  //   }
+  // );
+  // console.log("userResponse", userResponse);
+
+  // const updatedUser = {
+  //   token: user.token,
+  //   profile: userResponse.data.user,
+  // };
+
   const userData = encrypt(JSON.stringify(user));
   fs.writeFileSync(userDataPath, userData, "utf8");
 }
@@ -71,12 +105,14 @@ function createMainWindow() {
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
-    frame: false,
+    frame: true,
     icon: iconPath,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       nodeIntegration: false,
       contextIsolation: true,
+      enableRemoteModule: false,
+      webSecurity: false,
     },
   });
 
@@ -106,6 +142,8 @@ function createAdWindow(ad) {
       preload: path.join(__dirname, "preload.js"),
       nodeIntegration: false,
       contextIsolation: true,
+      enableRemoteModule: false,
+      webSecurity: false,
     },
   });
 
@@ -134,10 +172,12 @@ function createFullAdWindow(ad) {
       preload: path.join(__dirname, "preload.js"),
       nodeIntegration: false,
       contextIsolation: true,
+      enableRemoteModule: false,
+      webSecurity: false,
     },
   });
 
-  adWindow.loadURL(`file://${path.join(__dirname, "../../dist/index.html")}`);
+  adWindow.loadURL(`file://${path.join(__dirname, "../../public/index.html")}`);
   adWindow.webContents.on("did-finish-load", () => {
     adWindow.webContents.send("navigate-to-ad-window", ad);
   });
@@ -189,6 +229,8 @@ app.whenReady().then(() => {
   });
 
   ipcMain.on("show-ad", (event, ad) => {
+    console.log(ad);
+
     if (ad.windowSize == "normal") {
       createAdWindow(ad);
     } else if (ad.windowSize == "full") {

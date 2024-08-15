@@ -18,7 +18,7 @@
     "@mui/icons-material": "^5.16.5",
     "@mui/material": "^5.16.5",
     "auto-launch": "^5.0.6",
-    "axios": "^1.7.2",
+    "axios": "^1.7.4",
     "dotenv": "^16.4.5",
     "path-browserify": "^1.0.1",
     "react": "^18.3.1",

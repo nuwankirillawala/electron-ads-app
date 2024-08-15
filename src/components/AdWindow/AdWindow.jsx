@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 import { Typography, IconButton, Box, Snackbar, Alert } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
@@ -27,19 +28,18 @@ const AdWindow = ({ adData }) => {
   const handleReactionClick = async (reaction) => {
     if (ad) {
       try {
-        const response = await fetch(
-          "https://hr-app-api-n2c1.onrender.com/api/v1/popup/react",
+        const response = await axios.post(
+          "http://localhost:5000/api/v1/popup/react",
           {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              reaction,
-              id: ad._id,
-            }),
+            reaction: reaction,
+            id: ad._id,
+            electron: true,
+            token: user.token,
           }
         );
+        console.log("React response", response);
 
-        if (response.ok) {
+        if (response.status == 200) {
           setSelectedReaction(reaction);
         } else {
           setSnackbarOpen(true); // Show snackbar on error
@@ -54,6 +54,13 @@ const AdWindow = ({ adData }) => {
 
   const handleCloseSnackbar = () => {
     setSnackbarOpen(false); // Close snackbar
+  };
+
+  const isVideo = (url) => {
+    const videoExtensions = ["mp4", "webm", "ogg"];
+    const urlWithoutQuery = url.split("?")[0];
+    const extension = urlWithoutQuery.split(".").pop();
+    return videoExtensions.includes(extension);
   };
 
   if (!ad) return null;
@@ -87,19 +94,34 @@ const AdWindow = ({ adData }) => {
       >
         {ad.title}
       </Typography>
-      {ad.image && (
-        <img
-          src={ad.image}
-          alt="Ad"
-          style={{
-            maxWidth: "100%",
-            height: "300px",
-            display: "block",
-            marginBottom: 16,
-            objectFit: "contain",
-          }}
-        />
-      )}
+      {ad.image &&
+        (isVideo(ad.image) ? (
+          <video
+            src={ad.image}
+            controls
+            autoPlay
+            style={{
+              maxWidth: "100%",
+              height: "60vh",
+              display: "block",
+              marginBottom: 16,
+              objectFit: "contain",
+            }}
+          />
+        ) : (
+          <img
+            src={ad.image}
+            alt="Ad"
+            style={{
+              maxWidth: "100%",
+              // height: "300px",
+              height: "60vh",
+              display: "block",
+              marginBottom: 16,
+              objectFit: "contain",
+            }}
+          />
+        ))}
       <Typography variant="body1" paragraph sx={{ textAlign: "center" }}>
         {ad.message}
       </Typography>

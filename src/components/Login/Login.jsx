@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import axios from "axios";
 import {
   TextField,
   Button,
@@ -29,14 +30,48 @@ const Login = ({ onLogin }) => {
     event.preventDefault();
 
     try {
-      const response = await fetch("https://hr-app-api-n2c1.onrender.com/api/v1/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
+      // const response = await fetch("http://localhost:5000/api/v1/auth/login", {
+      //   method: "POST",
+      //   headers: { "Content-Type": "application/json" },
+      //   body: JSON.stringify({ email, password }),
+      // });
 
-      if (response.ok) {
-        onLogin(email, password); // Pass email and password to the onLogin callback
+      const response = await axios.post(
+        "http://localhost:5000/api/v1/auth/login",
+        {
+          email,
+          password,
+        }
+      );
+      console.log("Login response: ", response);
+      console.log("Login cookies: ", response.cookies);
+      console.log("Login data: ", response.data);
+      console.log("Login data cookie: ", response.data.data);
+      console.log("Login status: ", response.status);
+      console.log("Login data status: ", response.data.status);
+
+      if (response.status == 200) {
+        //  Setting the token to the request
+        const token = response.data.data;
+        // document.cookie = `jwt=${token}; path=/; secure; HttpOnly; SameSite=Strict`;
+
+        // Calling for user details - Need to handle errrors
+        // const userResponse = await axios.get(
+        //   "http://localhost:5000/api/v1/auth/profile",
+        //   {
+        //     token: token,
+        //     electron: true,
+        //   }
+        // );
+        // console.log(userResponse);
+
+        const user = {
+          email: email,
+          password: password,
+          token: token,
+          profile: response.data.user,
+        };
+        onLogin(user); // Pass email, password and token to the onLogin callback as user
       } else if (response.status === 401) {
         setError("Invalid email or password. Please try again.");
       } else {

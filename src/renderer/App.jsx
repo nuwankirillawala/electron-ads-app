@@ -9,7 +9,7 @@ import io from "socket.io-client";
 import sampleAd from "../../public/assets/images/sample-ad.jpg";
 
 // Create a socket instance
-const socket = io("https://hr-app-api-n2c1.onrender.com");
+const socket = io("http://localhost:5000");
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -30,9 +30,9 @@ function App() {
   useEffect(() => {
     if (window.electron) {
       const handleAutoLogin = (event, user) => {
-        setUsername(user.email);
-        setUser(user);
         setLoggedIn(true);
+        setUser(user);
+        setUsername(`${user.profile.firstName} ${user.profile.lastName}`);
         setLoading(false);
       };
 
@@ -80,20 +80,19 @@ function App() {
   const handleLogin = (user) => {
     setLoggedIn(true);
     setUser(user);
-    setUsername(user.email);
+    setUsername(`${user.profile.firstName} ${user.profile.lastName}`);
     if (window.electron) {
+      console.log("calling electron save user");
+
       window.electron.saveUserData(user); // Save user data on successful login
     }
   };
 
   const handleLogout = async () => {
-    const response = await fetch(
-      "https://hr-app-api-n2c1.onrender.com/api/v1/auth/logout",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-      }
-    );
+    const response = await fetch("http://localhost:5000/api/v1/auth/logout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+    });
 
     if (response.ok) {
       setLoggedIn(false);
@@ -143,7 +142,8 @@ function App() {
               <Login onLogin={handleLogin} />
             ) : (
               <Home
-                username={user}
+                user={user}
+                username={username}
                 onLogout={handleLogout}
                 onShowDummyAd={showDummyAd}
               />
@@ -151,7 +151,10 @@ function App() {
           }
         />
         <Route path="/information" element={<Information />} />
-        <Route path="/ad-window" element={<AdWindow adData={ad} />} />
+        <Route
+          path="/ad-window"
+          element={<AdWindow adData={ad} user={user} />}
+        />
       </Routes>
     </Container>
   );

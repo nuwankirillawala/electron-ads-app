@@ -10,7 +10,7 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import MinimizeIcon from "@mui/icons-material/Minimize";
 
-const Home = ({ user, onLogout, onShowDummyAd }) => {
+const Home = ({ user, username, onLogout, onShowDummyAd }) => {
   const handleMinimize = () => {
     if (window.electron && window.electron.minimizeWindow) {
       window.electron.minimizeWindow();
@@ -52,7 +52,8 @@ const Home = ({ user, onLogout, onShowDummyAd }) => {
         <Grid item xs={12} md={6}>
           <Paper elevation={3} sx={{ padding: 3, textAlign: "center" }}>
             <Typography variant="h4" gutterBottom>
-              Welcome{user && user.firstName ? `, ${user.firstName}` : ""}
+              Welcome
+              {user && username ? `, ${username}` : ""}
             </Typography>
 
             {/* <Button variant="contained" color="primary" onClick={onShowDummyAd}>
