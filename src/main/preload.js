@@ -1,7 +1,7 @@
 const { contextBridge, ipcRenderer } = require("electron");
 
 contextBridge.exposeInMainWorld("electron", {
-  showAd: (ad) => ipcRenderer.send("show-ad", ad),
+  showAd: (ad, user) => ipcRenderer.send("show-ad", ad, user),
   minimizeWindow: () => ipcRenderer.send("minimize-window"),
   closeWindow: () => ipcRenderer.send("close-window"),
   saveUserData: (user) => ipcRenderer.send("save-user-data", user),

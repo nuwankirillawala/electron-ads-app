@@ -6,26 +6,39 @@ import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import ThumbDownIcon from "@mui/icons-material/ThumbDown";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 
-const AdWindow = ({ adData }) => {
+const AdWindow = ({ adData, userData }) => {
   const [ad, setAd] = useState(null);
+  const [user, setUser] = useState({});
   const [selectedReaction, setSelectedReaction] = useState(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false); // State to manage snackbar visibility
 
   useEffect(() => {
-    const handleShowAd = (event, adData) => {
+    const handleShowAd = (event, adData, userData) => {
       setAd(adData);
+      setUser(userData);
+      console.log("userData to handleShowAd", userData);
     };
     setAd(adData);
+    setUser(userData);
     console.log("Ad window called");
+    console.log("u", user);
+    console.log("userData to AdWindow", userData);
+    console.log("adData to AdWindow", adData);
 
     window.electron.on("show-ad", handleShowAd);
 
     return () => {
       window.electron.off("show-ad", handleShowAd);
     };
-  }, [adData]);
+  }, [adData, userData]);
+
+  useEffect(() => {
+    console.log("User updated:", user);
+  }, [user]);
 
   const handleReactionClick = async (reaction) => {
+    console.log("handle reaction clicked", reaction);
+
     if (ad) {
       try {
         const response = await axios.post(
@@ -46,6 +59,8 @@ const AdWindow = ({ adData }) => {
           console.error("Failed to send reaction");
         }
       } catch (error) {
+        console.log("catch");
+
         setSnackbarOpen(true); // Show snackbar on error
         console.error("Error sending reaction:", error);
       }

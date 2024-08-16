@@ -132,11 +132,11 @@ function createMainWindow() {
   });
 }
 
-function createAdWindow(ad) {
+function createAdWindow(ad, user) {
   const adWindow = new BrowserWindow({
     width: 800,
     height: 600,
-    frame: false,
+    frame: true,
     alwaysOnTop: true,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
@@ -149,7 +149,7 @@ function createAdWindow(ad) {
 
   adWindow.loadURL(`file://${path.join(__dirname, "../../dist/index.html")}`);
   adWindow.webContents.on("did-finish-load", () => {
-    adWindow.webContents.send("navigate-to-ad-window", ad);
+    adWindow.webContents.send("navigate-to-ad-window", ad, user);
   });
 
   adWindow.on("closed", () => {
@@ -159,7 +159,7 @@ function createAdWindow(ad) {
   adWindows.push(adWindow);
 }
 
-function createFullAdWindow(ad) {
+function createFullAdWindow(ad, user) {
   const primaryDisplay = screen.getPrimaryDisplay();
   const { width, height } = primaryDisplay.workAreaSize;
 
@@ -179,7 +179,7 @@ function createFullAdWindow(ad) {
 
   adWindow.loadURL(`file://${path.join(__dirname, "../../public/index.html")}`);
   adWindow.webContents.on("did-finish-load", () => {
-    adWindow.webContents.send("navigate-to-ad-window", ad);
+    adWindow.webContents.send("navigate-to-ad-window", ad, user);
   });
 
   adWindow.on("closed", () => {
@@ -228,15 +228,27 @@ app.whenReady().then(() => {
     mainWindow.show();
   });
 
-  ipcMain.on("show-ad", (event, ad) => {
+  ipcMain.on("show-ad", (event, ad, user) => {
     console.log(ad);
+    console.log(user);
 
-    if (ad.windowSize == "normal") {
-      createAdWindow(ad);
-    } else if (ad.windowSize == "full") {
-      createFullAdWindow(ad);
+    // Check if user's department matches any in the popup's department array
+    const userDepartmentId = user.profile.department; // Assuming this is the department ID from the user object
+    const popupDepartments = ad.department; // Assuming this is an array of department IDs in the popup
+
+    if (popupDepartments.includes(userDepartmentId)) {
+      // If match is found, show the ad
+      if (ad.windowSize === "normal") {
+        createAdWindow(ad, user);
+      } else if (ad.windowSize === "full") {
+        createFullAdWindow(ad, user);
+      } else {
+        createAdWindow(ad, user);
+      }
     } else {
-      createAdWindow(ad);
+      console.log(
+        "User's department does not match any departments for this ad. Ad will not be shown."
+      );
     }
   });
 

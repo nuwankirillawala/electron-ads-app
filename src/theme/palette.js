@@ -1,7 +1,6 @@
 import { alpha } from "@mui/material/styles";
 
 // ----------------------------------------------------------------------
-
 // SETUP COLORS
 
 export const grey = {
@@ -15,6 +14,7 @@ export const grey = {
   700: "#454F5B",
   800: "#212B36",
   900: "#161C24",
+  950: "#0B1117", // Custom darker grey for dark mode background
 };
 
 export const primary = {
@@ -104,21 +104,20 @@ const base = {
 export function palette() {
   return {
     ...base,
-    mode: "light",
+    mode: "dark", // Set mode to dark
     text: {
-      primary: grey[800],
-      secondary: grey[600],
-      disabled: grey[500],
+      primary: grey[100],
+      secondary: grey[400],
+      disabled: grey[600],
     },
     background: {
-      paper: "#FFFFFF",
-      default: grey[100],
-      neutral: grey[200],
-      lightBlueLavender: "#D4D8EA",
+      paper: grey[900],
+      default: grey[950], // Darker background for the entire app
+      neutral: grey[800],
     },
     action: {
       ...base.action,
-      active: grey[600],
+      active: grey[500],
     },
   };
 }

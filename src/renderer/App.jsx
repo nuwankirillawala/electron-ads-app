@@ -32,6 +32,8 @@ function App() {
       const handleAutoLogin = (event, user) => {
         setLoggedIn(true);
         setUser(user);
+        console.log("saved user", user);
+
         setUsername(`${user.profile.firstName} ${user.profile.lastName}`);
         setLoading(false);
       };
@@ -46,10 +48,12 @@ function App() {
 
   useEffect(() => {
     if (loggedIn) {
-      const handleAdData = (adData) => {
+      const handleAdData = (adData, userData) => {
         console.log("Received ad data:", adData);
+        console.log("app user data:", user);
+
         if (window.electron) {
-          window.electron.showAd(adData); // Notify the main process to show the ad
+          window.electron.showAd(adData, user); // Notify the main process to show the ad
         }
       };
 
@@ -63,8 +67,12 @@ function App() {
 
   useEffect(() => {
     if (window.electron) {
-      const handleNavigateToAdWindow = (event, adData) => {
+      const handleNavigateToAdWindow = (event, adData, userData) => {
+        console.log("userData in handleNavigateToAdWindow", userData);
+        console.log("adData in handleNavigateToAdWindow", adData);
+
         setAd(adData);
+        setUser(userData);
         navigate("/ad-window");
         // Pass ad data to the AdWindow component via state or context if needed
       };
@@ -153,7 +161,7 @@ function App() {
         <Route path="/information" element={<Information />} />
         <Route
           path="/ad-window"
-          element={<AdWindow adData={ad} user={user} />}
+          element={<AdWindow adData={ad} userData={user} />}
         />
       </Routes>
     </Container>
