@@ -16,27 +16,39 @@ import {
 import { useTheme } from "@mui/material/styles";
 import CloseIcon from "@mui/icons-material/Close";
 import MinimizeIcon from "@mui/icons-material/Minimize";
-const logo = require("../../../public/assets/images/logo.png");
-const dashboard = require("../../../public/assets/images/mocks/dashboard_mock.png");
-const qhr_logo = require("../../../public/assets/images/qhr_logo.svg");
+
+import logo from "/assets/images/logo.png";
+import dashboard from "/assets/images/mocks/dashboard_mock.png";
+import qhr_logo from "/assets/images/qhr_logo.svg";
 
 const Login = ({ onLogin }) => {
   const theme = useTheme();
-  const [email, setEmail] = useState(""); // Use "email" to be consistent
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
+  const [emailError, setEmailError] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
   const [serverError, setServerError] = useState(false);
+  const [forgotPassword, setForgotPassword] = useState(false);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setEmailError(false);
+    setPasswordError(false);
+
+    if (!email) {
+      setEmailError(true);
+    }
+    if (!password) {
+      setPasswordError(true);
+    }
+
+    if (!email || !password) {
+      setError("Please enter both email and password.");
+      return;
+    }
 
     try {
-      // const response = await fetch("http://localhost:5000/api/v1/auth/login", {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify({ email, password }),
-      // });
-
       const response = await axios.post(
         "http://localhost:5000/api/v1/auth/login",
         {
@@ -45,20 +57,8 @@ const Login = ({ onLogin }) => {
         }
       );
 
-      if (response.status == 200) {
-        //  Setting the token to the request
+      if (response.status === 200) {
         const token = response.data.data;
-        // document.cookie = `jwt=${token}; path=/; secure; HttpOnly; SameSite=Strict`;
-
-        // Calling for user details - Need to handle errrors
-        // const userResponse = await axios.get(
-        //   "http://localhost:5000/api/v1/auth/profile",
-        //   {
-        //     token: token,
-        //     electron: true,
-        //   }
-        // );
-        // console.log(userResponse);
 
         const user = {
           email: email,
@@ -66,7 +66,7 @@ const Login = ({ onLogin }) => {
           token: token,
           profile: response.data.user,
         };
-        onLogin(user); // Pass email, password and token to the onLogin callback as user
+        onLogin(user);
       } else if (response.status === 401) {
         setError("Invalid email or password. Please try again.");
       } else {
@@ -78,11 +78,12 @@ const Login = ({ onLogin }) => {
   };
 
   const handleForgotPassword = () => {
-    alert("Please contact your administration.");
+    setForgotPassword(true);
   };
 
   const handleCloseErrorDialog = () => {
     setServerError(false);
+    setForgotPassword(false);
   };
 
   const handleMinimize = () => {
@@ -106,7 +107,6 @@ const Login = ({ onLogin }) => {
       <Box
         sx={{
           flex: 0.9,
-          // backgroundColor: theme.palette.background.lightBlueLavender,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -115,8 +115,8 @@ const Login = ({ onLogin }) => {
         <Box
           sx={{
             width: "100%",
-            height: "100%",
-            backgroundImage: dashboard, // Add your left-side image here
+            height: "80%",
+            backgroundImage: `url(${dashboard})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
             marginLeft: -20,
@@ -131,7 +131,6 @@ const Login = ({ onLogin }) => {
         </Box>
       </Box>
 
-      {/* Separation Line */}
       <Box
         sx={{
           width: "0.25%",
@@ -143,7 +142,6 @@ const Login = ({ onLogin }) => {
       <Box
         sx={{
           flex: 1.1,
-          // backgroundColor: theme.palette.background.lightBlueLavender,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -157,7 +155,6 @@ const Login = ({ onLogin }) => {
             justifyContent: "center",
             minHeight: "100vh",
             p: 2,
-            // backgroundColor: "#f5f5f5",
           }}
         >
           <Box
@@ -211,14 +208,19 @@ const Login = ({ onLogin }) => {
               width: "100%",
             }}
           >
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} noValidate>
               <TextField
                 label="Email"
                 variant="outlined"
                 fullWidth
                 required
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  setEmailError(false);
+                  setError(false);
+                }}
+                error={emailError}
                 sx={{ mb: 2 }}
               />
               <TextField
@@ -228,7 +230,12 @@ const Login = ({ onLogin }) => {
                 fullWidth
                 required
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  setPasswordError(false);
+                  setError(false);
+                }}
+                error={passwordError}
                 sx={{ mb: 1 }}
               />
               {error && (
@@ -260,14 +267,11 @@ const Login = ({ onLogin }) => {
             </form>
           </Box>
           <Box mt={2}>
-            {/* <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
-              Powered by NuraIT x Ceyapps
-            </Typography> */}
             <Box
               component="img"
-              src={qhr_logo} // Replace with the actual path to your image
+              src={qhr_logo}
               alt="Quantum HR Logo"
-              sx={{ width: 24, height: 24, mr: 1 }} // Adjust size and spacing as needed
+              sx={{ width: 24, height: 24, mr: 1 }}
             />
           </Box>
 
@@ -277,6 +281,21 @@ const Login = ({ onLogin }) => {
               <DialogContentText>
                 Unable to connect to the server. Please check your internet
                 connection.
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleCloseErrorDialog} color="primary">
+                OK
+              </Button>
+            </DialogActions>
+          </Dialog>
+
+          {/* Forgot Password Dialog Box */}
+          <Dialog open={forgotPassword} onClose={handleCloseErrorDialog}>
+            <DialogTitle>Ooops. Forgot Password?</DialogTitle>
+            <DialogContent>
+              <DialogContentText>
+                Please contact your administration.
               </DialogContentText>
             </DialogContent>
             <DialogActions>

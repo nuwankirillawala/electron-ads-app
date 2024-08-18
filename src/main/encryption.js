@@ -1,4 +1,4 @@
-const crypto = require("crypto");
+import crypto from "crypto";
 
 const algorithm = "aes-256-cbc";
 const key = crypto
@@ -24,7 +24,4 @@ function decrypt(text) {
   return decrypted;
 }
 
-module.exports = {
-  encrypt,
-  decrypt,
-};
+export { encrypt, decrypt };

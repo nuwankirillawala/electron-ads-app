@@ -1,5 +1,8 @@
-const { Tray, Menu } = require("electron");
-const path = require("path");
+import { Tray, Menu, app } from "electron";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 let tray;
 
@@ -23,6 +26,4 @@ function initializeTray(mainWindow) {
   });
 }
 
-module.exports = {
-  initializeTray,
-};
+export { initializeTray };

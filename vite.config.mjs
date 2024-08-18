@@ -1,25 +1,29 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import { fileURLToPath, URL } from "url";
 import path from "path";
 
 export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "src"), // Optional: Adds alias for the 'src' directory
+      "@": path.resolve(path.dirname(fileURLToPath(import.meta.url)), "src"),
     },
   },
   build: {
     outDir: "dist", // Output directory for production build
     rollupOptions: {
       output: {
-        entryFileNames: `assets/[name].js`,
-        chunkFileNames: `assets/[name].js`,
-        assetFileNames: `assets/[name].[ext]`,
+        entryFileNames: `assets/js/[name].js`,
+        chunkFileNames: `assets/js/[name]-[hash].js`,
+        assetFileNames: `assets/[ext]/[name]-[hash].[ext]`,
       },
     },
   },
   server: {
-    port: 3000, // Port for Vite dev server
+    port: 3000,
+  },
+  preview: {
+    port: 3000,
   },
 });

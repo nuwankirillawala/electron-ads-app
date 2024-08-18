@@ -1,6 +1,6 @@
-const { ipcMain } = require("electron");
-const { saveUserData, clearUserData, loadUserData } = require("./userData");
-const { createAdWindow, createFullAdWindow } = require("./windows");
+import { ipcMain, app } from "electron";
+import { saveUserData, clearUserData, loadUserData } from "./userData.js";
+import { createAdWindow, createFullAdWindow } from "./windows.js";
 
 function initializeIpcHandlers() {
   ipcMain.on("show-ad", (event, ad, user) => {
@@ -80,6 +80,4 @@ function initializeIpcHandlers() {
   }
 }
 
-module.exports = {
-  initializeIpcHandlers,
-};
+export { initializeIpcHandlers };

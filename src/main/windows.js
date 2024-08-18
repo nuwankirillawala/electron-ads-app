@@ -1,7 +1,14 @@
-const { BrowserWindow, screen } = require("electron");
-const path = require("path");
+import { BrowserWindow, screen, app } from "electron";
+import path from "path";
+import { fileURLToPath } from "url";
+import dotenv from "dotenv";
+dotenv.config();
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const isDev = process.env.NODE_ENV === "development";
+console.log("development mode: ", isDev);
+console.log("production mode: ", !isDev);
 
 let mainWindow;
 let adWindows = [];
@@ -12,10 +19,12 @@ function createMainWindow() {
     ? "http://localhost:3000" // Load from Vite dev server in development mode
     : `file://${path.join(__dirname, "../../dist/index.html")}`; // Load the production build in production mode
 
+  console.log("start ", startUrl);
+
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
-    frame: false,
+    frame: true,
     icon: iconPath,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
@@ -108,8 +117,4 @@ function createFullAdWindow(ad, user) {
   adWindows.push(adWindow);
 }
 
-module.exports = {
-  createMainWindow,
-  createAdWindow,
-  createFullAdWindow,
-};
+export { createMainWindow, createAdWindow, createFullAdWindow };

@@ -1,16 +1,13 @@
-import { app, BrowserWindow, Tray, Menu, ipcMain, screen } from "electron";
-import path from "path";
-import { fileURLToPath } from "url";
-import fs from "fs";
-import crypto from "crypto";
-import AutoLaunch from "auto-launch";
-import dotenv from "dotenv";
+const { app, BrowserWindow, Tray, Menu, ipcMain, screen } = require("electron");
+const path = require("path");
+const fs = require("fs");
+const crypto = require("crypto");
+const AutoLaunch = require("auto-launch"); // Add this line
+// const { session } = require("electron");
+// const axios = require("axios");
 
-dotenv.config(); // Load environment variables from .env file
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-const isDev = process.env.NODE_ENV === "development";
+// const isDev = process.env.NODE_ENV === "development";
+const isDev = false;
 
 let mainWindow;
 let tray;
@@ -23,10 +20,10 @@ const key = crypto
   .createHash("sha256")
   .update(String("your-secret-key"))
   .digest("base64")
-  .substr(0, 32);
+  .substr(0, 32); // Your fixed key
 
 function encrypt(text) {
-  const iv = crypto.randomBytes(16);
+  const iv = crypto.randomBytes(16); // Initialization vector
   const cipher = crypto.createCipheriv(algorithm, key, iv);
   let encrypted = cipher.update(text, "utf8", "hex");
   encrypted += cipher.final("hex");
@@ -44,6 +41,37 @@ function decrypt(text) {
 
 async function saveUserData(user) {
   console.log("saving user data");
+
+  // set the cookies - session
+  // const cookie = {
+  //   url: "http://localhost:5000/api/v1/",
+  //   name: "jwt",
+  //   value: user.token,
+  //   sameSite: "strict",
+  // };
+  // console.log("Cookie", cookie);
+
+  // try {
+  //   await session.defaultSession.cookies.set(cookie);
+  //   console.log("Cookie set successfully");
+  // } catch (error) {
+  //   console.error("Failed to set cookie:", error);
+  // }
+
+  // Override the user data
+  // const userResponse = await axios.get(
+  //   "http://localhost:5000/api/v1/auth/profile",
+  //   {
+  //     withCredentials: true,
+  //   }
+  // );
+  // console.log("userResponse", userResponse);
+
+  // const updatedUser = {
+  //   token: user.token,
+  //   profile: userResponse.data.user,
+  // };
+
   const userData = encrypt(JSON.stringify(user));
   fs.writeFileSync(userDataPath, userData, "utf8");
 }
@@ -71,8 +99,8 @@ function clearUserData() {
 function createMainWindow() {
   const iconPath = path.join(__dirname, "../../public/assets/images/icon.png");
   const startUrl = isDev
-    ? "http://localhost:3000" // Vite dev server URL
-    : `file://${path.join(__dirname, "../../dist/index.html")}`; // Production build path
+    ? `file://${path.join(__dirname, "../../public/index.html")}`
+    : `file://${path.join(__dirname, "../../dist/index.html")}`;
 
   mainWindow = new BrowserWindow({
     width: 800,
@@ -119,11 +147,7 @@ function createAdWindow(ad, user) {
     },
   });
 
-  adWindow.loadURL(
-    isDev
-      ? "http://localhost:3000" // Vite dev server URL
-      : `file://${path.join(__dirname, "../../dist/index.html")}`
-  );
+  adWindow.loadURL(`file://${path.join(__dirname, "../../dist/index.html")}`);
   adWindow.webContents.on("did-finish-load", () => {
     adWindow.webContents.send("navigate-to-ad-window", ad, user);
   });
@@ -153,11 +177,7 @@ function createFullAdWindow(ad, user) {
     },
   });
 
-  adWindow.loadURL(
-    isDev
-      ? "http://localhost:3000" // Vite dev server URL
-      : `file://${path.join(__dirname, "../../dist/index.html")}`
-  );
+  adWindow.loadURL(`file://${path.join(__dirname, "../../public/index.html")}`);
   adWindow.webContents.on("did-finish-load", () => {
     adWindow.webContents.send("navigate-to-ad-window", ad, user);
   });
@@ -171,13 +191,14 @@ function createFullAdWindow(ad, user) {
 
 // Auto-launch setup
 const appAutoLauncher = new AutoLaunch({
-  name: "YourAppName",
-  path: app.getPath("exe"),
+  name: "YourAppName", // Replace with your app's name
+  path: app.getPath("exe"), // Path to the executable
 });
 
 app.whenReady().then(() => {
   createMainWindow();
 
+  // Enable auto-launch
   appAutoLauncher
     .isEnabled()
     .then((isEnabled) => {
@@ -200,25 +221,23 @@ app.whenReady().then(() => {
       },
     },
   ]);
-  tray.setToolTip("Your App Name");
+  tray.setToolTip("Acorn HR App");
   tray.setContextMenu(contextMenu);
 
   tray.on("click", () => {
-    if (mainWindow) {
-      mainWindow.show();
-    } else {
-      console.error("mainWindow is not defined.");
-    }
+    mainWindow.show();
   });
 
   ipcMain.on("show-ad", (event, ad, user) => {
-    const userDepartmentId = user.profile.department;
-    const popupDepartments = ad.department;
+    console.log(ad);
+    console.log(user);
 
-    if (
-      !popupDepartments.length ||
-      popupDepartments.includes(userDepartmentId)
-    ) {
+    // Check if user's department matches any in the popup's department array
+    const userDepartmentId = user.profile.department; // Assuming this is the department ID from the user object
+    const popupDepartments = ad.department; // Assuming this is an array of department IDs in the popup
+
+    if (popupDepartments.includes(userDepartmentId)) {
+      // If match is found, show the ad
       if (ad.windowSize === "normal") {
         createAdWindow(ad, user);
       } else if (ad.windowSize === "full") {
@@ -259,6 +278,7 @@ app.whenReady().then(() => {
 });
 
 app.on("before-quit", () => {
+  // Perform cleanup or other tasks before the app quits
   console.log("App is quitting...");
 });
 

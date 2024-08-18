@@ -1,7 +1,8 @@
 {
-  "name": "electron-pop-app",
+  "name": "quantum-hr-app",
   "version": "1.0.0",
-  "description": "Electron App for Popping Messages",
+  "type": "module",
+  "description": "Quantum HR App - PupUps portal",
   "main": "src/main/main.js",
   "scripts": {
     "start": "electron .",
@@ -38,8 +39,8 @@
     "rimraf": "^5.0.9"
   },
   "build": {
-    "appId": "com.electronpopapp.app",
-    "productName": "ElectronPopApp",
+    "appId": "com.quantumhr.app",
+    "productName": "QuantumHRApp",
     "files": [
       "dist/**/*",
       "src/main/**/*",

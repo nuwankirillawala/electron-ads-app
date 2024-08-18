@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require("electron");
+import { app, BrowserWindow } from "electron";
 
 function registerAppEvents() {
   app.on("before-quit", () => {
@@ -18,6 +18,4 @@ function registerAppEvents() {
   });
 }
 
-module.exports = {
-  registerAppEvents,
-};
+export { registerAppEvents };

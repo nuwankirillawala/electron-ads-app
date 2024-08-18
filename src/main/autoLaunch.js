@@ -1,8 +1,9 @@
-const AutoLaunch = require("auto-launch");
+import AutoLaunch from "auto-launch";
+import { app } from "electron";
 
 function setupAutoLaunch() {
   const appAutoLauncher = new AutoLaunch({
-    name: "YourAppName",
+    name: "QuantumHRApp",
     path: app.getPath("exe"),
   });
 
@@ -18,6 +19,4 @@ function setupAutoLaunch() {
     });
 }
 
-module.exports = {
-  setupAutoLaunch,
-};
+export { setupAutoLaunch };

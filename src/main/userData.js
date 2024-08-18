@@ -1,6 +1,7 @@
-const fs = require("fs");
-const path = require("path");
-const { encrypt, decrypt } = require("./encryption");
+import { app } from "electron";
+import fs from "fs";
+import path from "path";
+import { encrypt, decrypt } from "./encryption.js";
 const userDataPath = path.join(app.getPath("userData"), "user_data.json");
 
 async function saveUserData(user) {
@@ -28,8 +29,4 @@ function clearUserData() {
   }
 }
 
-module.exports = {
-  saveUserData,
-  loadUserData,
-  clearUserData,
-};
+export { saveUserData, loadUserData, clearUserData };
