@@ -16,8 +16,8 @@ let adWindows = [];
 function createMainWindow() {
   const iconPath = path.join(__dirname, "../../public/assets/images/icon.png");
   const startUrl = isDev
-    ? "http://localhost:3000" // Load from Vite dev server in development mode
-    : `file://${path.join(__dirname, "../../dist/index.html")}`; // Load the production build in production mode
+    ? "http://localhost:3000"
+    : `file://${path.join(__dirname, "../../dist/index.html")}`;
 
   console.log("start ", startUrl);
 
@@ -48,6 +48,8 @@ function createMainWindow() {
     event.preventDefault();
     mainWindow.hide();
   });
+
+  return mainWindow;
 }
 
 function createAdWindow(ad, user) {

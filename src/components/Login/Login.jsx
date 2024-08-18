@@ -56,6 +56,7 @@ const Login = ({ onLogin }) => {
           password,
         }
       );
+      console.log("response ", response);
 
       if (response.status === 200) {
         const token = response.data.data;
@@ -104,6 +105,7 @@ const Login = ({ onLogin }) => {
 
   return (
     <Box sx={{ display: "flex", height: "100vh" }}>
+      {/* Left Side */}
       <Box
         sx={{
           flex: 0.9,
@@ -131,6 +133,7 @@ const Login = ({ onLogin }) => {
         </Box>
       </Box>
 
+      {/* Center Line */}
       <Box
         sx={{
           width: "0.25%",
@@ -139,6 +142,8 @@ const Login = ({ onLogin }) => {
           mr: "20px",
         }}
       />
+
+      {/* Right Side */}
       <Box
         sx={{
           flex: 1.1,
@@ -275,6 +280,7 @@ const Login = ({ onLogin }) => {
             />
           </Box>
 
+          {/* Server Error Dialog Box */}
           <Dialog open={serverError} onClose={handleCloseErrorDialog}>
             <DialogTitle>Error</DialogTitle>
             <DialogContent>

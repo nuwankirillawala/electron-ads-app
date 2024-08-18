@@ -5,6 +5,9 @@ import fs from "fs";
 import crypto from "crypto";
 import AutoLaunch from "auto-launch";
 import dotenv from "dotenv";
+import { initializeTray } from "./tray.js";
+import { setupAutoLaunch } from "./autoLaunch.js";
+import { createMainWindow } from "./windows.js";
 
 dotenv.config(); // Load environment variables from .env file
 
@@ -68,41 +71,41 @@ function clearUserData() {
   }
 }
 
-function createMainWindow() {
-  const iconPath = path.join(__dirname, "../../public/assets/images/icon.png");
-  const startUrl = isDev
-    ? "http://localhost:3000" // Vite dev server URL
-    : `file://${path.join(__dirname, "../../dist/index.html")}`; // Production build path
+// function createMainWindow() {
+//   const iconPath = path.join(__dirname, "../../public/assets/images/icon.png");
+//   const startUrl = isDev
+//     ? "http://localhost:3000"
+//     : `file://${path.join(__dirname, "../../dist/index.html")}`;
 
-  mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
-    frame: false,
-    icon: iconPath,
-    webPreferences: {
-      preload: path.join(__dirname, "preload.js"),
-      nodeIntegration: false,
-      contextIsolation: true,
-      enableRemoteModule: false,
-      webSecurity: false,
-    },
-  });
+//   mainWindow = new BrowserWindow({
+//     width: 800,
+//     height: 600,
+//     frame: true,
+//     icon: iconPath,
+//     webPreferences: {
+//       preload: path.join(__dirname, "preload.js"),
+//       nodeIntegration: false,
+//       contextIsolation: true,
+//       enableRemoteModule: false,
+//       webSecurity: false,
+//     },
+//   });
 
-  mainWindow.loadURL(startUrl);
+//   mainWindow.loadURL(startUrl);
 
-  mainWindow.on("close", (event) => {
-    if (!app.isQuiting) {
-      event.preventDefault();
-      mainWindow.hide();
-    }
-    return false;
-  });
+//   mainWindow.on("close", (event) => {
+//     if (!app.isQuiting) {
+//       event.preventDefault();
+//       mainWindow.hide();
+//     }
+//     return false;
+//   });
 
-  mainWindow.on("minimize", (event) => {
-    event.preventDefault();
-    mainWindow.hide();
-  });
-}
+//   mainWindow.on("minimize", (event) => {
+//     event.preventDefault();
+//     mainWindow.hide();
+//   });
+// }
 
 function createAdWindow(ad, user) {
   const adWindow = new BrowserWindow({
@@ -169,47 +172,15 @@ function createFullAdWindow(ad, user) {
   adWindows.push(adWindow);
 }
 
-// Auto-launch setup
-const appAutoLauncher = new AutoLaunch({
-  name: "YourAppName",
-  path: app.getPath("exe"),
-});
-
 app.whenReady().then(() => {
-  createMainWindow();
+  // Create the main window
+  mainWindow = createMainWindow();
 
-  appAutoLauncher
-    .isEnabled()
-    .then((isEnabled) => {
-      if (!isEnabled) {
-        appAutoLauncher.enable();
-      }
-    })
-    .catch((err) => {
-      console.error("Auto-launch error:", err);
-    });
+  //setup the auto launch
+  setupAutoLaunch();
 
-  tray = new Tray(path.join(__dirname, "../../public/assets/images/icon.png"));
-  const contextMenu = Menu.buildFromTemplate([
-    { label: "Show App", click: () => mainWindow.show() },
-    {
-      label: "Quit",
-      click: () => {
-        app.isQuiting = true;
-        app.quit();
-      },
-    },
-  ]);
-  tray.setToolTip("Your App Name");
-  tray.setContextMenu(contextMenu);
-
-  tray.on("click", () => {
-    if (mainWindow) {
-      mainWindow.show();
-    } else {
-      console.error("mainWindow is not defined.");
-    }
-  });
+  // Initialize the Tray icon
+  initializeTray(mainWindow);
 
   ipcMain.on("show-ad", (event, ad, user) => {
     const userDepartmentId = user.profile.department;
@@ -228,7 +199,7 @@ app.whenReady().then(() => {
       }
     } else {
       console.log(
-        "User's department does not match any departments for this ad. Ad will not be shown."
+        "User's department does not match any departments for this popup. Popup will not be shown."
       );
     }
   });

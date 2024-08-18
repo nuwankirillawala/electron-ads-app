@@ -18,7 +18,7 @@ function initializeTray(mainWindow) {
       },
     },
   ]);
-  tray.setToolTip("YourAppName");
+  tray.setToolTip("QuantumHR - Acorn Popups Portal");
   tray.setContextMenu(contextMenu);
 
   tray.on("click", () => {
