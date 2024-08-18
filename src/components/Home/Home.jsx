@@ -8,14 +8,15 @@ import {
   IconButton,
   Grid,
   Avatar,
+  Switch,
+  MenuItem,
+  Select,
   CssBaseline,
   GlobalStyles,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import MinimizeIcon from "@mui/icons-material/Minimize";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
-import AssignmentIcon from "@mui/icons-material/Assignment";
-import NewspaperIcon from "@mui/icons-material/Newspaper";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 
@@ -26,6 +27,11 @@ const Home = ({ user, username, onLogout }) => {
     region: null,
     country: null,
   });
+  const [runInBackground, setRunInBackground] = useState(false);
+  const [pausePopups, setPausePopups] = useState(false);
+  const [workingCountry, setWorkingCountry] = useState(
+    user.profile.workingCountry || ""
+  );
 
   useEffect(() => {
     // Update time every second
@@ -33,13 +39,14 @@ const Home = ({ user, username, onLogout }) => {
       setCurrentTime(new Date());
     }, 1000);
 
-    // Fetch the user's IP address first
+    // Fetch the user's IP address and get location.
     axios
       .get("https://api.ipify.org?format=json")
       .then((response) => {
         const userIp = response.data.ip;
-        // Use the IP address to get the user's location
-        return axios.get(`https://ipinfo.io/${userIp}?token=49d8842c08b501`); // Replace with your IPInfo token
+        return axios.get(
+          `https://ipinfo.io/${userIp}?token=${process.env.REACT_APP_IP_TOKEN}`
+        );
       })
       .then((response) => {
         const { city, region, country } = response.data;
@@ -66,6 +73,11 @@ const Home = ({ user, username, onLogout }) => {
     } else {
       console.error("Electron IPC context not available");
     }
+  };
+
+  const handleWorkingCountryChange = (event) => {
+    setWorkingCountry(event.target.value);
+    // Logic to update the working country
   };
 
   const formattedDate = currentTime.toLocaleDateString("en-US", {
@@ -102,27 +114,56 @@ const Home = ({ user, username, onLogout }) => {
         }}
       />
       <Box sx={{ height: "90vh", display: "flex", flexDirection: "column" }}>
-        {/* Header */}
+        {/* Title Bar */}
         <Box
           sx={{
-            p: 0.25,
+            p: 1,
             display: "flex",
-            justifyContent: "flex-end",
+            justifyContent: "space-between",
+            alignItems: "center",
+            backgroundColor: "#333",
+            color: "#fff",
             width: "100%",
           }}
         >
-          <IconButton onClick={handleMinimize}>
-            <MinimizeIcon />
-          </IconButton>
-          <IconButton onClick={handleClose}>
-            <CloseIcon />
-          </IconButton>
+          <Typography variant="h6" sx={{ marginLeft: 2 }}>
+            Acorn Travels - QHR Popup Portal
+          </Typography>
+          <Box>
+            <IconButton onClick={handleMinimize} sx={{ color: "#fff" }}>
+              <MinimizeIcon />
+            </IconButton>
+            <IconButton onClick={handleClose} sx={{ color: "#fff" }}>
+              <CloseIcon />
+            </IconButton>
+          </Box>
         </Box>
 
-        {/* Body */}
-        <Grid container spacing={2} sx={{ flex: 1, overflow: "auto", p: 3 }}>
-          {/* User Details Card */}
-          <Grid item xs={12} md={6} lg={4}>
+        {/* Date and Time Section */}
+        <Grid container spacing={2} sx={{ padding: 2 }}>
+          <Grid item xs={6}>
+            <Paper elevation={3} sx={{ padding: 2, textAlign: "center" }}>
+              <CalendarTodayIcon fontSize="large" color="primary" />
+              <Typography variant="h6">Date</Typography>
+              <Typography variant="body2" color="textSecondary">
+                {formattedDate}
+              </Typography>
+            </Paper>
+          </Grid>
+          <Grid item xs={6}>
+            <Paper elevation={3} sx={{ padding: 2, textAlign: "center" }}>
+              <AccessTimeIcon fontSize="large" color="primary" />
+              <Typography variant="h6">Time</Typography>
+              <Typography variant="body2" color="textSecondary">
+                {formattedTime}
+              </Typography>
+            </Paper>
+          </Grid>
+        </Grid>
+
+        {/* Profile Section */}
+        <Grid container spacing={2} sx={{ padding: 2 }}>
+          <Grid item xs={4}>
             <Paper elevation={3} sx={{ padding: 3, textAlign: "center" }}>
               <Avatar
                 sx={{ width: 80, height: 80, margin: "0 auto" }}
@@ -130,85 +171,100 @@ const Home = ({ user, username, onLogout }) => {
               >
                 {!user.profile.profilePicUrl && (username ? username[0] : "U")}
               </Avatar>
-              <Typography variant="h5" gutterBottom>
+            </Paper>
+          </Grid>
+          <Grid item xs={4}>
+            <Paper elevation={3} sx={{ padding: 3, textAlign: "center" }}>
+              <Typography variant="h6">
                 {username ? username : "User"}
               </Typography>
-              <Typography variant="body1" color="textSecondary">
+              <Typography variant="body2" color="textSecondary">
                 {user ? user.email : "user@example.com"}
               </Typography>
-            </Paper>
-          </Grid>
-
-          {/* Date, Time, and Location Cards in Same Row */}
-          <Grid item xs={12} md={6} lg={8} container spacing={2}>
-            {/* Calendar Card */}
-            <Grid item xs={4}>
-              <Paper elevation={3} sx={{ padding: 3, textAlign: "center" }}>
-                <CalendarTodayIcon fontSize="large" color="primary" />
-                <Typography variant="h6" gutterBottom>
-                  Date
-                </Typography>
-                <Typography variant="body2" color="textSecondary">
-                  {formattedDate}
-                </Typography>
-              </Paper>
-            </Grid>
-            {/* Time Card */}
-            <Grid item xs={4}>
-              <Paper elevation={3} sx={{ padding: 3, textAlign: "center" }}>
-                <AccessTimeIcon fontSize="large" color="primary" />
-                <Typography variant="h6" gutterBottom>
-                  Time
-                </Typography>
-                <Typography variant="body2" color="textSecondary">
-                  {formattedTime}
-                </Typography>
-              </Paper>
-            </Grid>
-            {/* Location Card */}
-            <Grid item xs={4}>
-              <Paper elevation={3} sx={{ padding: 3, textAlign: "center" }}>
-                <LocationOnIcon fontSize="large" color="primary" />
-                <Typography variant="h6" gutterBottom>
-                  Location
-                </Typography>
-                <Typography variant="body2" color="textSecondary">
-                  {location.city && location.region && location.country
-                    ? `${location.city}, ${location.region}, ${location.country}`
-                    : "Unable to determine"}
-                </Typography>
-              </Paper>
-            </Grid>
-          </Grid>
-
-          {/* News Card */}
-          <Grid item xs={12} md={6} lg={4}>
-            <Paper elevation={3} sx={{ padding: 3, textAlign: "center" }}>
-              <NewspaperIcon fontSize="large" color="primary" />
-              <Typography variant="h6" gutterBottom>
-                Latest News
-              </Typography>
               <Typography variant="body2" color="textSecondary">
-                Headlines go here. Keep up with the latest news.
+                Department: {user.profile.department || "N/A"}
               </Typography>
             </Paper>
           </Grid>
-
-          {/* Tasks Card */}
-          <Grid item xs={12} md={6} lg={4}>
+          <Grid item xs={4}>
             <Paper elevation={3} sx={{ padding: 3, textAlign: "center" }}>
-              <AssignmentIcon fontSize="large" color="primary" />
-              <Typography variant="h6" gutterBottom>
-                Tasks
+              <LocationOnIcon fontSize="large" color="primary" />
+              <Typography variant="h6">Location</Typography>
+              <Typography variant="body2" color="textSecondary">
+                Country: {user.profile.country || "N/A"}
               </Typography>
               <Typography variant="body2" color="textSecondary">
-                Your tasks for today.
+                Working Country: {user.profile.workingCountry || "N/A"}
+              </Typography>
+              <Typography variant="body2" color="textSecondary">
+                Current Location:{" "}
+                {location.city && location.region && location.country
+                  ? `${location.city}, ${location.region}, ${location.country}`
+                  : "Unable to determine"}
               </Typography>
             </Paper>
           </Grid>
         </Grid>
 
-        {/* Footer */}
+        {/* Buttons and Options Section */}
+        <Grid container spacing={2} sx={{ padding: 2 }}>
+          <Grid item xs={6}>
+            <Paper elevation={3} sx={{ padding: 3, textAlign: "center" }}>
+              <Typography variant="h6">Popups</Typography>
+              <Box sx={{ display: "flex", justifyContent: "center", mt: 1 }}>
+                <Box sx={{ textAlign: "left", mr: 2 }}>
+                  <Typography variant="body2">Run in background</Typography>
+                  <Switch
+                    checked={runInBackground}
+                    onChange={(e) => setRunInBackground(e.target.checked)}
+                  />
+                </Box>
+                <Box sx={{ textAlign: "left" }}>
+                  <Typography variant="body2">Pause Popups</Typography>
+                  <Switch
+                    checked={pausePopups}
+                    onChange={(e) => setPausePopups(e.target.checked)}
+                  />
+                </Box>
+              </Box>
+            </Paper>
+          </Grid>
+          <Grid item xs={6}>
+            <Paper elevation={3} sx={{ padding: 3, textAlign: "center" }}>
+              <Typography variant="h6">Working Country</Typography>
+              <Select
+                value={workingCountry}
+                onChange={handleWorkingCountryChange}
+                fullWidth
+                sx={{ mt: 2 }}
+              >
+                {/* Add your available country options here */}
+                <MenuItem value="Sri Lanka">Sri Lanka</MenuItem>
+                <MenuItem value="India">India</MenuItem>
+                <MenuItem value="United States">United States</MenuItem>
+                {/* Add more options as needed */}
+              </Select>
+              <Button
+                variant="contained"
+                color="primary"
+                sx={{ mt: 2 }}
+                onClick={() => {
+                  // Logic to update working country
+                  console.log("Working country changed to:", workingCountry);
+                }}
+              >
+                Change
+              </Button>
+            </Paper>
+          </Grid>
+        </Grid>
+
+        {/* Space for Future Components */}
+        <Grid container spacing={2} sx={{ padding: 2 }}>
+          {/* Add future components here */}
+        </Grid>
+
+        {/* Logout Button */}
         <Box
           sx={{
             p: 2,
@@ -218,6 +274,7 @@ const Home = ({ user, username, onLogout }) => {
             width: "100%",
             borderTop: 1,
             borderColor: "grey.300",
+            mt: "auto",
           }}
         >
           <Button variant="contained" color="primary" onClick={onLogout}>

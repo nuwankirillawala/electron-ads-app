@@ -7,7 +7,7 @@ const AutoLaunch = require("auto-launch"); // Add this line
 // const axios = require("axios");
 
 // const isDev = process.env.NODE_ENV === "development";
-const isDev = true;
+const isDev = false;
 
 let mainWindow;
 let tray;
@@ -105,7 +105,7 @@ function createMainWindow() {
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
-    frame: true,
+    frame: false,
     icon: iconPath,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),

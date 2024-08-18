@@ -16,8 +16,9 @@ import {
 import { useTheme } from "@mui/material/styles";
 import CloseIcon from "@mui/icons-material/Close";
 import MinimizeIcon from "@mui/icons-material/Minimize";
-import logo from "../../../public/assets/images/logo.png";
-import dashboard from "../../../public/assets/images/mocks/dashboard_mock.png"; // Adjust path as needed
+const logo = require("../../../public/assets/images/logo.png");
+const dashboard = require("../../../public/assets/images/mocks/dashboard_mock.png");
+const qhr_logo = require("../../../public/assets/images/qhr_logo.svg");
 
 const Login = ({ onLogin }) => {
   const theme = useTheme();
@@ -43,12 +44,6 @@ const Login = ({ onLogin }) => {
           password,
         }
       );
-      console.log("Login response: ", response);
-      console.log("Login cookies: ", response.cookies);
-      console.log("Login data: ", response.data);
-      console.log("Login data cookie: ", response.data.data);
-      console.log("Login status: ", response.status);
-      console.log("Login data status: ", response.data.status);
 
       if (response.status == 200) {
         //  Setting the token to the request
@@ -121,7 +116,7 @@ const Login = ({ onLogin }) => {
           sx={{
             width: "100%",
             height: "100%",
-            // backgroundImage: dashboard, // Add your left-side image here
+            backgroundImage: dashboard, // Add your left-side image here
             backgroundSize: "cover",
             backgroundPosition: "center",
             marginLeft: -20,
@@ -265,9 +260,15 @@ const Login = ({ onLogin }) => {
             </form>
           </Box>
           <Box mt={2}>
-            <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
+            {/* <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
               Powered by NuraIT x Ceyapps
-            </Typography>
+            </Typography> */}
+            <Box
+              component="img"
+              src={qhr_logo} // Replace with the actual path to your image
+              alt="Quantum HR Logo"
+              sx={{ width: 24, height: 24, mr: 1 }} // Adjust size and spacing as needed
+            />
           </Box>
 
           <Dialog open={serverError} onClose={handleCloseErrorDialog}>
