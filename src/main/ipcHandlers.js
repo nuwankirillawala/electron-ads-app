@@ -2,7 +2,7 @@ import { ipcMain, app } from "electron";
 import { saveUserData, clearUserData, loadUserData } from "./userData.js";
 import { createAdWindow, createFullAdWindow } from "./windows.js";
 
-function initializeIpcHandlers() {
+function initializeIpcHandlers(mainWindow) {
   ipcMain.on("show-ad", (event, ad, user) => {
     // Check if user is logged in by verifying the presence of a token or profile data
     if (!user || !user.token || !user.profile) {

@@ -3,13 +3,13 @@ import path from "path";
 import { fileURLToPath } from "url";
 import fs from "fs";
 import crypto from "crypto";
-import AutoLaunch from "auto-launch";
 import dotenv from "dotenv";
 import { initializeTray } from "./tray.js";
 import { setupAutoLaunch } from "./autoLaunch.js";
 import { createMainWindow } from "./windows.js";
+import { initializeIpcHandlers } from "./ipcHandlers.js";
 
-dotenv.config(); // Load environment variables from .env file
+dotenv.config();
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -70,42 +70,6 @@ function clearUserData() {
     fs.unlinkSync(userDataPath);
   }
 }
-
-// function createMainWindow() {
-//   const iconPath = path.join(__dirname, "../../public/assets/images/icon.png");
-//   const startUrl = isDev
-//     ? "http://localhost:3000"
-//     : `file://${path.join(__dirname, "../../dist/index.html")}`;
-
-//   mainWindow = new BrowserWindow({
-//     width: 800,
-//     height: 600,
-//     frame: true,
-//     icon: iconPath,
-//     webPreferences: {
-//       preload: path.join(__dirname, "preload.js"),
-//       nodeIntegration: false,
-//       contextIsolation: true,
-//       enableRemoteModule: false,
-//       webSecurity: false,
-//     },
-//   });
-
-//   mainWindow.loadURL(startUrl);
-
-//   mainWindow.on("close", (event) => {
-//     if (!app.isQuiting) {
-//       event.preventDefault();
-//       mainWindow.hide();
-//     }
-//     return false;
-//   });
-
-//   mainWindow.on("minimize", (event) => {
-//     event.preventDefault();
-//     mainWindow.hide();
-//   });
-// }
 
 function createAdWindow(ad, user) {
   const adWindow = new BrowserWindow({
@@ -182,51 +146,8 @@ app.whenReady().then(() => {
   // Initialize the Tray icon
   initializeTray(mainWindow);
 
-  ipcMain.on("show-ad", (event, ad, user) => {
-    const userDepartmentId = user.profile.department;
-    const popupDepartments = ad.department;
-
-    if (
-      !popupDepartments.length ||
-      popupDepartments.includes(userDepartmentId)
-    ) {
-      if (ad.windowSize === "normal") {
-        createAdWindow(ad, user);
-      } else if (ad.windowSize === "full") {
-        createFullAdWindow(ad, user);
-      } else {
-        createAdWindow(ad, user);
-      }
-    } else {
-      console.log(
-        "User's department does not match any departments for this popup. Popup will not be shown."
-      );
-    }
-  });
-
-  ipcMain.on("minimize-window", () => {
-    mainWindow.minimize();
-  });
-
-  ipcMain.on("close-window", () => {
-    app.isQuiting = true;
-    app.quit();
-  });
-
-  ipcMain.on("save-user-data", (event, user) => {
-    saveUserData(user);
-  });
-
-  ipcMain.on("clear-user-data", () => {
-    clearUserData();
-  });
-
-  const savedUser = loadUserData();
-  if (savedUser) {
-    mainWindow.webContents.on("did-finish-load", () => {
-      mainWindow.webContents.send("auto-login", savedUser);
-    });
-  }
+  //IPC Handlers
+  initializeIpcHandlers(mainWindow);
 });
 
 app.on("before-quit", () => {
