@@ -42,7 +42,7 @@ const AdWindow = ({ adData, userData }) => {
     if (ad) {
       try {
         const response = await axios.post(
-          "http://localhost:5000/api/v1/popup/react",
+          "https://hr-app-api-n2c1.onrender.com/api/v1/popup/react",
           {
             reaction: reaction,
             id: ad._id,

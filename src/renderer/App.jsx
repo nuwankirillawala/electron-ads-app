@@ -9,7 +9,7 @@ import io from "socket.io-client";
 import sampleAd from "../../public/assets/images/sample-ad.jpg";
 
 // Create a socket instance
-const socket = io("http://localhost:5000");
+const socket = io("https://hr-app-api-n2c1.onrender.com");
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -97,10 +97,13 @@ function App() {
   };
 
   const handleLogout = async () => {
-    const response = await fetch("http://localhost:5000/api/v1/auth/logout", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-    });
+    const response = await fetch(
+      "https://hr-app-api-n2c1.onrender.com/api/v1/auth/logout",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      }
+    );
 
     if (response.ok) {
       setLoggedIn(false);
@@ -130,7 +133,7 @@ function App() {
   };
 
   return (
-    <Container component="main" maxWidth="md" sx={{ padding: 4 }}>
+    <Container component="main" maxWidth="false" sx={{ padding: 1 }}>
       <Routes>
         <Route
           path="/"

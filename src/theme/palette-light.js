@@ -101,24 +101,23 @@ const base = {
 
 // ----------------------------------------------------------------------
 
-export function palette(isDarkMode) {
+export function palette() {
   return {
     ...base,
-    mode: isDarkMode ? "dark" : "light",
+    mode: "light",
     text: {
-      primary: isDarkMode ? grey[100] : grey[800],
-      secondary: isDarkMode ? grey[300] : grey[600],
-      disabled: isDarkMode ? grey[500] : grey[400],
+      primary: grey[800],
+      secondary: grey[600],
+      disabled: grey[500],
     },
     background: {
-      paper: isDarkMode ? grey[900] : "#FFFFFF",
-      default: isDarkMode ? grey[800] : grey[100],
-      neutral: isDarkMode ? grey[700] : grey[200],
-      lightBlueLavender: isDarkMode ? grey[600] : "#D4D8EA",
+      paper: "#FFFFFF",
+      default: grey[100],
+      neutral: grey[200],
     },
     action: {
       ...base.action,
-      active: isDarkMode ? grey[500] : grey[600],
+      active: grey[600],
     },
   };
 }

@@ -2,19 +2,28 @@ import { ipcMain, app } from "electron";
 import { saveUserData, clearUserData, loadUserData } from "./userData.js";
 import { createAdWindow, createFullAdWindow } from "./windows.js";
 
+let isMutedPopups = false;
+let runInBackground = false;
+
 function initializeIpcHandlers(mainWindow) {
   ipcMain.on("show-ad", (event, ad, user) => {
     // Check if user is logged in by verifying the presence of a token or profile data
     if (!user || !user.token || !user.profile) {
-      console.log("User is not logged in. Ad will not be shown.");
+      console.log("User is not logged in. Popup will not be shown.");
+      return;
+    }
+
+    // Check if the popups are muted
+    if (isMutedPopups) {
+      console.log("Popups are muted. Popup will not be shown.");
       return;
     }
 
     const userDepartmentId = user.profile.department;
-    const userCountry = user.profile.country;
+    const userTimeZone = Intl.DateTimeFormat().resolvedOptions().TimeZone;
     const userWorkingCountry = user.profile.workingCountry;
     const popupDepartments = ad.department || [];
-    const popupCountry = ad.country || null;
+    const popupTimeZone = ad.TimeZone || null;
 
     // Department Filter
     const departmentMatch =
@@ -24,14 +33,9 @@ function initializeIpcHandlers(mainWindow) {
     // Country Filter
     let countryMatch = false;
 
-    if (popupCountry) {
-      // If popup has a country filter, check user's country and workingCountry
-      if (userCountry === userWorkingCountry && userCountry === popupCountry) {
-        countryMatch = true;
-      } else if (
-        userCountry !== userWorkingCountry &&
-        userWorkingCountry === popupCountry
-      ) {
+    if (popupTimeZone) {
+      // If popup has a country filter, check user's country
+      if (userTimeZone === popupTimeZone) {
         countryMatch = true;
       }
     } else {
@@ -42,11 +46,11 @@ function initializeIpcHandlers(mainWindow) {
     // Show Ad if both department and country match
     if (departmentMatch && countryMatch) {
       if (ad.windowSize === "normal") {
-        createAdWindow(ad, user);
+        createAdWindow(ad, user, runInBackground);
       } else if (ad.windowSize === "full") {
-        createFullAdWindow(ad, user);
+        createFullAdWindow(ad, user, runInBackground);
       } else {
-        createAdWindow(ad, user);
+        createAdWindow(ad, user, runInBackground);
       }
     } else {
       console.log(
@@ -70,6 +74,16 @@ function initializeIpcHandlers(mainWindow) {
 
   ipcMain.on("clear-user-data", () => {
     clearUserData();
+  });
+
+  ipcMain.on("update-mute-status", (event, isMuted) => {
+    console.log("Mute status:", isMuted);
+    isMutedPopups = isMuted;
+  });
+
+  ipcMain.on("update-run-in-background", (event, runInBg) => {
+    console.log("Run in background status:", runInBg);
+    runInBackground = runInBg;
   });
 
   const savedUser = loadUserData();

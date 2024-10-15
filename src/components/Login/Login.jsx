@@ -50,7 +50,7 @@ const Login = ({ onLogin }) => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/v1/auth/login",
+        "https://hr-app-api-n2c1.onrender.com/api/v1/auth/login",
         {
           email,
           password,

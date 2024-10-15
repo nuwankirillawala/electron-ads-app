@@ -1,7 +1,6 @@
 import { alpha } from "@mui/material/styles";
 
 // ----------------------------------------------------------------------
-
 // SETUP COLORS
 
 export const grey = {
@@ -15,6 +14,7 @@ export const grey = {
   700: "#454F5B",
   800: "#212B36",
   900: "#161C24",
+  950: "#0B1117", // Custom darker grey for dark mode background
 };
 
 export const primary = {
@@ -56,7 +56,7 @@ export const success = {
 export const warning = {
   lighter: "#FFF5CC",
   light: "#FFD666",
-  main: "#FFAB00",
+  main: "#FDBE00",
   dark: "#B76E00",
   darker: "#7A4100",
   contrastText: grey[800],
@@ -101,24 +101,23 @@ const base = {
 
 // ----------------------------------------------------------------------
 
-export function palette(isDarkMode) {
+export function palette() {
   return {
     ...base,
-    mode: isDarkMode ? "dark" : "light",
+    mode: "dark", // Set mode to dark
     text: {
-      primary: isDarkMode ? grey[100] : grey[800],
-      secondary: isDarkMode ? grey[300] : grey[600],
-      disabled: isDarkMode ? grey[500] : grey[400],
+      primary: grey[100],
+      secondary: grey[400],
+      disabled: grey[600],
     },
     background: {
-      paper: isDarkMode ? grey[900] : "#FFFFFF",
-      default: isDarkMode ? grey[800] : grey[100],
-      neutral: isDarkMode ? grey[700] : grey[200],
-      lightBlueLavender: isDarkMode ? grey[600] : "#D4D8EA",
+      paper: grey[900],
+      default: grey[950], // Darker background for the entire app
+      neutral: grey[800],
     },
     action: {
       ...base.action,
-      active: isDarkMode ? grey[500] : grey[600],
+      active: grey[500],
     },
   };
 }

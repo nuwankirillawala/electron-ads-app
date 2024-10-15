@@ -24,7 +24,6 @@ function createMainWindow() {
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
-    frame: true,
     icon: iconPath,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
@@ -52,12 +51,12 @@ function createMainWindow() {
   return mainWindow;
 }
 
-function createAdWindow(ad, user) {
+function createAdWindow(ad, user, runInBackground) {
   const adWindow = new BrowserWindow({
     width: 800,
     height: 600,
-    frame: false,
-    alwaysOnTop: true,
+    // frame: true,
+    alwaysOnTop: runInBackground ? false : true,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       nodeIntegration: false,
@@ -92,7 +91,7 @@ function createFullAdWindow(ad, user) {
     width,
     height,
     frame: false,
-    alwaysOnTop: true,
+    alwaysOnTop: runInBackground ? false : true,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       nodeIntegration: false,
