@@ -188,7 +188,8 @@ const Home = ({ user, username, onLogout }) => {
               Acorn Travels - QHR Popup Portal
             </Typography>
             <Box>
-              <Button
+              {/* Hide the logout button as the request of acorn admin team. */}
+              {/* <Button
                 variant="contained"
                 sx={{
                   backgroundColor: (theme) => theme.palette.primary.main,
@@ -200,7 +201,7 @@ const Home = ({ user, username, onLogout }) => {
                 onClick={onLogout}
               >
                 Logout
-              </Button>
+              </Button> */}
               <IconButton
                 onClick={handleMinimize}
                 sx={{ color: (theme) => theme.palette.text.primary }}

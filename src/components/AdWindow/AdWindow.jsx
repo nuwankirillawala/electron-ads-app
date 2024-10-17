@@ -115,6 +115,7 @@ const AdWindow = ({ adData, userData }) => {
             src={ad.image}
             controls
             autoPlay
+            muted
             style={{
               maxWidth: "100%",
               height: "60vh",
