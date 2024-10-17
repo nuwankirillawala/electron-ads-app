@@ -6,9 +6,11 @@ dotenv.config();
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-const isDev = process.env.NODE_ENV === "development";
-console.log("development mode: ", isDev);
-console.log("production mode: ", !isDev);
+// const isDev = process.env.NODE_ENV === "development";
+// console.log("development mode: ", isDev);
+// console.log("production mode: ", !isDev);
+
+const isDev = true;
 
 let mainWindow;
 let adWindows = [];
@@ -24,6 +26,7 @@ function createMainWindow() {
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
+    frame: true,
     icon: iconPath,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
@@ -51,45 +54,11 @@ function createMainWindow() {
   return mainWindow;
 }
 
+// Create the normal size popup ad window
 function createAdWindow(ad, user, runInBackground) {
   const adWindow = new BrowserWindow({
     width: 800,
     height: 600,
-    // frame: true,
-    alwaysOnTop: runInBackground ? false : true,
-    webPreferences: {
-      preload: path.join(__dirname, "preload.js"),
-      nodeIntegration: false,
-      contextIsolation: true,
-      enableRemoteModule: false,
-      webSecurity: false,
-    },
-  });
-
-  adWindow.loadURL(
-    isDev
-      ? "http://localhost:3000" // Load from Vite dev server in development mode
-      : `file://${path.join(__dirname, "../../dist/index.html")}`
-  ); // Load the production build in production mode
-
-  adWindow.webContents.on("did-finish-load", () => {
-    adWindow.webContents.send("navigate-to-ad-window", ad, user);
-  });
-
-  adWindow.on("closed", () => {
-    adWindows = adWindows.filter((win) => win !== adWindow);
-  });
-
-  adWindows.push(adWindow);
-}
-
-function createFullAdWindow(ad, user) {
-  const primaryDisplay = screen.getPrimaryDisplay();
-  const { width, height } = primaryDisplay.workAreaSize;
-
-  const adWindow = new BrowserWindow({
-    width,
-    height,
     frame: false,
     alwaysOnTop: runInBackground ? false : true,
     webPreferences: {
@@ -110,6 +79,57 @@ function createFullAdWindow(ad, user) {
   adWindow.webContents.on("did-finish-load", () => {
     adWindow.webContents.send("navigate-to-ad-window", ad, user);
   });
+
+  adWindow.webContents.on(
+    "did-fail-load",
+    (event, errorCode, errorDescription) => {
+      console.error("Failed to load ad window:", errorDescription);
+    }
+  );
+
+  adWindow.on("closed", () => {
+    adWindows = adWindows.filter((win) => win !== adWindow);
+  });
+
+  adWindows.push(adWindow);
+}
+
+// Crete the full size popup ad window.
+function createFullAdWindow(ad, user, runInBackground) {
+  const primaryDisplay = screen.getPrimaryDisplay();
+  const { width, height } = primaryDisplay.workAreaSize;
+
+  const adWindow = new BrowserWindow({
+    width,
+    height,
+    frame: false,
+    fullscreen: false,
+    alwaysOnTop: runInBackground ? false : true,
+    webPreferences: {
+      preload: path.join(__dirname, "preload.js"),
+      nodeIntegration: false,
+      contextIsolation: true,
+      enableRemoteModule: false,
+      webSecurity: false,
+    },
+  });
+
+  adWindow.loadURL(
+    isDev
+      ? "http://localhost:3000" // Load from Vite dev server in development mode
+      : `file://${path.join(__dirname, "../../dist/index.html")}`
+  ); // Load the production build in production mode
+
+  adWindow.webContents.on("did-finish-load", () => {
+    adWindow.webContents.send("navigate-to-ad-window", ad, user);
+  });
+
+  adWindow.webContents.on(
+    "did-fail-load",
+    (event, errorCode, errorDescription) => {
+      console.error("Failed to load ad window:", errorDescription);
+    }
+  );
 
   adWindow.on("closed", () => {
     adWindows = adWindows.filter((win) => win !== adWindow);
