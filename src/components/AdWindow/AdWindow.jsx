@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Typography, IconButton, Box, Snackbar, Alert } from "@mui/material";
+import {
+  Typography,
+  IconButton,
+  Box,
+  Snackbar,
+  Alert,
+  Link,
+} from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import ThumbDownIcon from "@mui/icons-material/ThumbDown";
@@ -10,20 +17,18 @@ const AdWindow = ({ adData, userData }) => {
   const [ad, setAd] = useState(null);
   const [user, setUser] = useState({});
   const [selectedReaction, setSelectedReaction] = useState(null);
-  const [snackbarOpen, setSnackbarOpen] = useState(false); // State to manage snackbar visibility
+  const [reacted, setReacted] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     const handleShowAd = (event, adData, userData) => {
       setAd(adData);
       setUser(userData);
-      console.log("userData to handleShowAd", userData);
     };
     setAd(adData);
     setUser(userData);
-    console.log("Ad window called");
-    console.log("u", user);
-    console.log("userData to AdWindow", userData);
-    console.log("adData to AdWindow", adData);
 
     window.electron.on("show-ad", handleShowAd);
 
@@ -32,43 +37,54 @@ const AdWindow = ({ adData, userData }) => {
     };
   }, [adData, userData]);
 
-  useEffect(() => {
-    console.log("User updated:", user);
-  }, [user]);
-
   const handleReactionClick = async (reaction) => {
-    console.log("handle reaction clicked", reaction);
-
     if (ad) {
       try {
-        const response = await axios.post(
-          "https://hr-app-api-n2c1.onrender.com/api/v1/popup/react",
-          {
-            reaction: reaction,
-            id: ad._id,
-            electron: true,
-            token: user.token,
-          }
-        );
-        console.log("React response", response);
+        const response = await axios.post(`${apiUrl}/api/v1/popup/react`, {
+          reaction: reaction,
+          id: ad._id,
+          electron: true,
+          token: user.token,
+        });
 
-        if (response.status == 200) {
+        if (response.status === 200) {
           setSelectedReaction(reaction);
+          setReacted(true);
         } else {
-          setSnackbarOpen(true); // Show snackbar on error
-          console.error("Failed to send reaction");
+          setSnackbarOpen(true);
         }
       } catch (error) {
-        console.log("catch");
-
-        setSnackbarOpen(true); // Show snackbar on error
-        console.error("Error sending reaction:", error);
+        setSnackbarOpen(true);
       }
     }
   };
 
   const handleCloseSnackbar = () => {
-    setSnackbarOpen(false); // Close snackbar
+    setSnackbarOpen(false);
+  };
+
+  const handleWindowClose = async () => {
+    window.close();
+    try {
+      if (!reacted) {
+        const response = await axios.post(`${apiUrl}/api/v1/popup/react`, {
+          reaction: 9,
+          id: ad._id,
+          electron: true,
+          token: user.token,
+        });
+
+        if (response.status === 200) {
+          window.close();
+        } else {
+          console.error("Failed to send reaction with value 9");
+        }
+      } else {
+        window.close();
+      }
+    } catch (error) {
+      console.error("Error during reaction handling or window closing:", error);
+    }
   };
 
   const isVideo = (url) => {
@@ -83,72 +99,120 @@ const AdWindow = ({ adData, userData }) => {
   return (
     <Box
       sx={{
-        padding: 4,
         width: "100%",
-        height: "100%",
-        boxSizing: "border-box",
+        height: "100vh",
         display: "flex",
         flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
+        boxSizing: "border-box",
       }}
     >
-      <IconButton
-        edge="end"
-        color="inherit"
-        onClick={() => window.close()}
-        aria-label="close"
-        sx={{ position: "absolute", right: 16, top: 16 }}
-      >
-        <CloseIcon />
-      </IconButton>
-      <Typography
-        variant="h4"
-        gutterBottom
-        sx={{ fontWeight: "bold", textAlign: "center" }}
-      >
-        {ad.title}
-      </Typography>
-      {ad.image &&
-        (isVideo(ad.image) ? (
-          <video
-            src={ad.image}
-            controls
-            autoPlay
-            muted
-            style={{
-              maxWidth: "100%",
-              height: "60vh",
-              display: "block",
-              marginBottom: 16,
-              objectFit: "contain",
-            }}
-          />
-        ) : (
-          <img
-            src={ad.image}
-            alt="Ad"
-            style={{
-              maxWidth: "100%",
-              // height: "300px",
-              height: "60vh",
-              display: "block",
-              marginBottom: 16,
-              objectFit: "contain",
-            }}
-          />
-        ))}
-      <Typography variant="body1" paragraph sx={{ textAlign: "center" }}>
-        {ad.message}
-      </Typography>
+      {/* Header */}
       <Box
-        sx={{ display: "flex", justifyContent: "center", gap: 2, marginTop: 2 }}
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          padding: 2,
+          borderBottom: "1px solid #ddd",
+        }}
       >
-        {/* Reaction Mapping
-        1 - Like
-        0 - Dislike 
-        2 - Heart */}
+        <Typography
+          variant="h4"
+          sx={{ fontWeight: "bold", textAlign: "center", flexGrow: 1 }}
+        >
+          {ad.title}
+        </Typography>
+        <IconButton
+          edge="end"
+          sx={{ color: (theme) => theme.palette.error.dark }}
+          onClick={() => handleWindowClose()}
+          aria-label="close"
+        >
+          <CloseIcon />
+        </IconButton>
+      </Box>
 
+      {/* Body */}
+      <Box
+        sx={{
+          flex: 1,
+          overflowY: "auto",
+          padding: 2,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          "&::-webkit-scrollbar": {
+            width: "6px",
+          },
+          "&::-webkit-scrollbar-track": {
+            background: "#f1f1f1",
+          },
+          "&::-webkit-scrollbar-thumb": {
+            background: "#888",
+            borderRadius: "10px",
+          },
+          "&::-webkit-scrollbar-thumb:hover": {
+            background: "#555",
+          },
+        }}
+      >
+        {ad.image &&
+          (isVideo(ad.image) ? (
+            <video
+              src={ad.image}
+              controls
+              autoPlay
+              muted
+              style={{
+                maxWidth: "100%",
+                height: "60vh",
+                display: "block",
+                marginBottom: 16,
+                objectFit: "contain",
+              }}
+            />
+          ) : (
+            <img
+              src={ad.image}
+              alt="Ad"
+              style={{
+                maxWidth: "100%",
+                height: "60vh",
+                display: "block",
+                marginBottom: 16,
+                objectFit: "contain",
+              }}
+            />
+          ))}
+        <Typography variant="body1" paragraph sx={{ textAlign: "center" }}>
+          {ad.message}
+        </Typography>
+        {ad.link1 && (
+          <Typography variant="body1" paragraph sx={{ textAlign: "center" }}>
+            <Link href={ad.link1} target="_blank" rel="noopener noreferrer">
+              {ad.link1}
+            </Link>
+          </Typography>
+        )}
+        {ad.link2 && (
+          <Typography variant="body1" paragraph sx={{ textAlign: "center" }}>
+            <Link href={ad.link2} target="_blank" rel="noopener noreferrer">
+              {ad.link2}
+            </Link>
+          </Typography>
+        )}
+      </Box>
+
+      {/* Footer */}
+      <Box
+        sx={{
+          padding: 2,
+          borderTop: "1px solid #ddd",
+          display: "flex",
+          justifyContent: "center",
+          gap: 2,
+        }}
+      >
         <IconButton
           color={selectedReaction === 1 ? "primary" : "default"}
           onClick={() => handleReactionClick(1)}

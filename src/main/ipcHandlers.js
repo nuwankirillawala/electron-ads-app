@@ -19,11 +19,12 @@ function initializeIpcHandlers(mainWindow) {
       return;
     }
 
-    const userDepartmentId = user.profile.department;
-    const userTimeZone = Intl.DateTimeFormat().resolvedOptions().TimeZone;
+    const userDepartmentId = user.profile.department._id;
+    const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    console.log(userTimeZone);
     const userWorkingCountry = user.profile.workingCountry;
-    const popupDepartments = ad.department || [];
-    const popupTimeZone = ad.TimeZone || null;
+    const popupDepartments = ad.departments || [];
+    const popupTimeZone = ad.timezone || null;
 
     // Department Filter
     const departmentMatch =
@@ -43,6 +44,11 @@ function initializeIpcHandlers(mainWindow) {
       countryMatch = true;
     }
 
+    console.log("popup:", JSON.stringify(ad, null, 2));
+    console.log("popupTimeZone: " + popupTimeZone);
+    console.log("userTimeZone: " + userTimeZone);
+    console.log("countryMatch: " + countryMatch);
+
     // Show Ad if both department and country match
     if (departmentMatch && countryMatch) {
       if (ad.windowSize === "normal") {
@@ -54,7 +60,7 @@ function initializeIpcHandlers(mainWindow) {
       }
     } else {
       console.log(
-        "Ad will not be shown due to department or country mismatch."
+        "Popup will not be shown due to department or timezone mismatch."
       );
     }
   });

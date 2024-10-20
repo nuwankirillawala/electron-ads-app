@@ -67,81 +67,104 @@ const PopupOptions = ({
   };
 
   return (
-    <Grid item xs={6}>
-      <Paper elevation={3} sx={{ padding: 3 }}>
-        <Typography align="center">
-          <WebStoriesIcon fontSize="large" color="primary" />
-        </Typography>
-        <Typography variant="h6" align="center">
-          Popup Options
-        </Typography>
-        <Box sx={{ mt: 2 }}>
-          <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-            <Typography variant="body2" sx={{ flex: 1 }}>
-              Run in background
+    <Grid container spacing={2}>
+      <Grid item xs={12}>
+        <Paper elevation={3} sx={{ padding: 3, width: "100%" }}>
+          {/* Title and Icon */}
+          <Box display="flex" flexDirection="column" alignItems="center" mb={2}>
+            <WebStoriesIcon fontSize="large" color="primary" />
+            <Typography variant="h6" align="center">
+              Popup Options
             </Typography>
-            <Switch
-              checked={runInBackground}
-              onChange={(e) => setRunInBackground(e.target.checked)}
-            />
           </Box>
-          <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-            <Typography variant="body2" sx={{ flex: 1 }}>
-              Pause Popups
-            </Typography>
-            <IconButton onClick={handleDialogOpen}>
-              {isMuted ? (
-                <NotificationsOffIcon color="error" />
-              ) : (
-                <NotificationsActiveIcon color="primary" />
-              )}
-            </IconButton>
-          </Box>
-        </Box>
 
-        <Dialog open={dialogOpen} onClose={handleDialogClose}>
-          <DialogTitle>Pause Popups</DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-              Please select the duration for which you would like to pause the
-              popups:
-            </DialogContentText>
-            <RadioGroup
-              aria-label="pause duration"
-              name="pause-duration"
-              value={selectedTime}
-              onChange={handleTimeChange}
+          {/* Options */}
+          <Box>
+            {/* Row 1: Run in Background */}
+            <Box
+              display="flex"
+              justifyContent="space-between"
+              alignItems="center"
+              mb={2}
             >
-              <FormControlLabel value="none" control={<Radio />} label="None" />
-              <FormControlLabel
-                value="30"
-                control={<Radio />}
-                label="30 mins"
+              <Typography variant="body1">Run in background</Typography>
+              <Switch
+                checked={runInBackground}
+                onChange={(e) => setRunInBackground(e.target.checked)}
               />
-              <FormControlLabel value="60" control={<Radio />} label="1 hour" />
-              <FormControlLabel
-                value="120"
-                control={<Radio />}
-                label="2 hours"
-              />
-              <FormControlLabel
-                value="240"
-                control={<Radio />}
-                label="4 hours"
-              />
-              <FormControlLabel
-                value="480"
-                control={<Radio />}
-                label="8 hours"
-              />
-            </RadioGroup>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleDialogClose}>Cancel</Button>
-            <Button onClick={handleDialogOk}>OK</Button>
-          </DialogActions>
-        </Dialog>
-      </Paper>
+            </Box>
+
+            {/* Row 2: Pause Popups */}
+            <Box
+              display="flex"
+              justifyContent="space-between"
+              alignItems="center"
+              mb={2}
+            >
+              <Typography variant="body1">Pause Popups</Typography>
+              <IconButton onClick={handleDialogOpen}>
+                {isMuted ? (
+                  <NotificationsOffIcon color="error" />
+                ) : (
+                  <NotificationsActiveIcon color="primary" />
+                )}
+              </IconButton>
+            </Box>
+          </Box>
+
+          {/* Dialog for Pause Duration */}
+          <Dialog open={dialogOpen} onClose={handleDialogClose}>
+            <DialogTitle>Pause Popups</DialogTitle>
+            <DialogContent>
+              <DialogContentText>
+                Please select the duration for which you would like to pause the
+                popups:
+              </DialogContentText>
+              <RadioGroup
+                aria-label="pause duration"
+                name="pause-duration"
+                value={selectedTime}
+                onChange={handleTimeChange}
+              >
+                <FormControlLabel
+                  value="none"
+                  control={<Radio />}
+                  label="None"
+                />
+                <FormControlLabel
+                  value="30"
+                  control={<Radio />}
+                  label="30 mins"
+                />
+                <FormControlLabel
+                  value="60"
+                  control={<Radio />}
+                  label="1 hour"
+                />
+                <FormControlLabel
+                  value="120"
+                  control={<Radio />}
+                  label="2 hours"
+                />
+                <FormControlLabel
+                  value="240"
+                  control={<Radio />}
+                  label="4 hours"
+                />
+                <FormControlLabel
+                  value="480"
+                  control={<Radio />}
+                  label="8 hours"
+                />
+              </RadioGroup>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleDialogClose}>Cancel</Button>
+              <Button onClick={handleDialogOk}>OK</Button>
+            </DialogActions>
+          </Dialog>
+        </Paper>
+      </Grid>
     </Grid>
   );
 };

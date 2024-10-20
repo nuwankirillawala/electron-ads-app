@@ -16,6 +16,7 @@ import {
   AppBar,
   Toolbar,
   Badge,
+  Tooltip,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import MinimizeIcon from "@mui/icons-material/Minimize";
@@ -23,6 +24,7 @@ import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import PersonIcon from "@mui/icons-material/Person";
+import InfoIcon from "@mui/icons-material/Info";
 
 import { useTheme, styled } from "@mui/material/styles";
 import { width } from "@mui/system";
@@ -31,6 +33,7 @@ import { primary } from "../../theme/palette";
 
 import PopupOptions from "./PopupOptions";
 import ProfileDetails from "./ProfileDetails";
+import acorn_logo_tp from "/assets/images/acorn_logo_tp.png";
 
 const apiToken = import.meta.env.VITE_APP_IP_TOKEN;
 const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -114,10 +117,10 @@ const Home = ({ user, username, onLogout }) => {
       backgroundColor: "#44b700",
       color: "#44b700",
       boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
-      width: "24px", // Adjusted for larger size
-      height: "24px", // Adjusted for larger size
-      borderRadius: "12px", // Adjusted for larger size
-      fontSize: "1.2rem", // Adjusted for larger size
+      width: "24px",
+      height: "24px",
+      borderRadius: "12px",
+      fontSize: "1.2rem",
       "&::after": {
         position: "absolute",
         top: 0,
@@ -166,6 +169,7 @@ const Home = ({ user, username, onLogout }) => {
           flexDirection: "column",
         }}
       >
+        {/* ##################################### APPBAR ##################################### */}
         {/* Title Bar */}
         <AppBar
           position="static"
@@ -184,41 +188,64 @@ const Home = ({ user, username, onLogout }) => {
               alignItems: "center",
             }}
           >
-            <Typography variant="h6" sx={{ marginLeft: 2 }}>
-              Acorn Travels - QHR Popup Portal
-            </Typography>
+            {/* Company Logo */}
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <img
+                src={acorn_logo_tp}
+                alt="Company Logo"
+                style={{ height: "70px", marginRight: "8px" }}
+              />
+            </Box>
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Typography
+                variant="h6"
+                sx={{ color: (theme) => theme.palette.primary.main }}
+              >
+                QuantumHR Notification Portal
+              </Typography>
+            </Box>
             <Box>
-              {/* Hide the logout button as the request of acorn admin team. */}
-              {/* <Button
-                variant="contained"
-                sx={{
-                  backgroundColor: (theme) => theme.palette.primary.main,
-                  color: (theme) => theme.palette.primary.contrastText,
-                  "&:hover": {
-                    backgroundColor: (theme) => theme.palette.primary.dark,
-                  },
-                }}
-                onClick={onLogout}
+              <Tooltip
+                title={
+                  <React.Fragment>
+                    <Typography variant="body2" color="inherit">
+                      Information:
+                    </Typography>
+                    <Typography variant="caption" color="inherit">
+                      - Product: QuantumHR Notify
+                    </Typography>
+                    <br />
+                    <Typography variant="caption" color="inherit">
+                      - Version: 1.0.0
+                    </Typography>
+                    <br />
+                    <Typography variant="caption" color="inherit">
+                      - Developed by: Ceyapps Global & NuraIT
+                    </Typography>
+                    <br />
+                    <Typography variant="caption" color="inherit">
+                      - For more info, Please contact the HR department
+                    </Typography>
+                  </React.Fragment>
+                }
+                arrow
               >
-                Logout
-              </Button> */}
-              <IconButton
-                onClick={handleMinimize}
-                sx={{ color: (theme) => theme.palette.text.primary }}
-              >
-                <MinimizeIcon />
-              </IconButton>
-              <IconButton
-                onClick={handleClose}
-                sx={{ color: (theme) => theme.palette.text.primary }}
-              >
-                <CloseIcon />
-              </IconButton>
+                <IconButton
+                  onClick={() => {
+                    console.log("Info button clicked");
+                    // Add any logic needed for the info button here
+                  }}
+                  sx={{ color: (theme) => theme.palette.primary.main }}
+                >
+                  <InfoIcon />
+                </IconButton>
+              </Tooltip>
             </Box>
           </Toolbar>
         </AppBar>
 
-        {/* Date and Time Section */}
+        {/* ##################################### PROFILE ##################################### */}
+
         <Box sx={{ flexGrow: 1, overflowY: "auto", padding: 2 }}>
           {/* Profile Section */}
           <Grid container spacing={2} sx={{ padding: 2 }}>
@@ -272,6 +299,8 @@ const Home = ({ user, username, onLogout }) => {
             </Grid>
           </Grid>
 
+          {/* ##################################### POPUP OPTIONS ##################################### */}
+
           {/* Buttons and Options Section */}
           <Grid container spacing={2} sx={{ padding: 2 }}>
             <PopupOptions
@@ -281,13 +310,15 @@ const Home = ({ user, username, onLogout }) => {
               setPausePopups={setPausePopups}
             />
 
-            <Grid item xs={6}>
+            {/* ##################################### FEATURE SECTIONS ##################################### */}
+
+            {/* <Grid item xs={6}>
               <Paper
                 elevation={3}
                 sx={{ position: "relative", padding: 3, textAlign: "center" }}
-              >
-                {/* Gray overlay for non-pro version */}
-                {!isProVersion && (
+              > */}
+            {/* Gray overlay for non-pro version */}
+            {/* {!isProVersion && (
                   <Box
                     sx={{
                       position: "absolute",
@@ -305,11 +336,11 @@ const Home = ({ user, username, onLogout }) => {
                       fontSize: "18px",
                     }}
                   >
-                    Pro Version Required
+                    Beta Permission Required
                   </Box>
-                )}
-                {/* Content underneath the overlay */}
-                <Typography variant="h6">Change Working Country</Typography>
+                )} */}
+            {/* Content underneath the overlay */}
+            {/* <Typography variant="h6">Change Working Country</Typography>
                 <Select
                   value={workingCountry}
                   onChange={handleWorkingCountryChange}
@@ -333,7 +364,7 @@ const Home = ({ user, username, onLogout }) => {
                   Change
                 </Button>
               </Paper>
-            </Grid>
+            </Grid> */}
           </Grid>
 
           {/* Space for Future Components */}
@@ -342,12 +373,13 @@ const Home = ({ user, username, onLogout }) => {
           </Grid>
         </Box>
 
-        {/* Logout Button */}
+        {/* ##################################### FOOTER ##################################### */}
+
         <Box
           sx={{
             p: 2,
             display: "flex",
-            justifyContent: "space-between", // Changed to space-between to align date and time
+            justifyContent: "space-between",
             alignItems: "center",
             width: "100%",
             height: "5px",

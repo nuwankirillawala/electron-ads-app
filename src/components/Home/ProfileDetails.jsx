@@ -3,8 +3,6 @@ import { Grid, Paper, Typography } from "@mui/material";
 import PersonIcon from "@mui/icons-material/Person";
 
 const ProfileDetails = ({ user }) => {
-  console.log(user);
-
   return (
     <Grid item xs={5}>
       <Paper
@@ -19,7 +17,13 @@ const ProfileDetails = ({ user }) => {
           {user ? user.email : "user@example.com"}
         </Typography>
         <Typography variant="body2" color="textSecondary">
+          Employee No: {user.profile.employeeNo || "N/A"}
+        </Typography>
+        <Typography variant="body2" color="textSecondary">
           Department: {user.profile.department?.departmentName || "N/A"}
+        </Typography>
+        <Typography variant="body2" color="textSecondary">
+          User Role: {user.profile.employeeRole?.role || "N/A"}
         </Typography>
       </Paper>
     </Grid>

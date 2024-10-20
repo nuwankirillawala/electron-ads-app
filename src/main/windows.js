@@ -28,6 +28,8 @@ function createMainWindow() {
     height: 600,
     frame: true,
     icon: iconPath,
+    autoHideMenuBar: true,
+    // titleBarStyle: "hidden",
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       nodeIntegration: false,

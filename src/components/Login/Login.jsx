@@ -30,6 +30,7 @@ const Login = ({ onLogin }) => {
   const [passwordError, setPasswordError] = useState(false);
   const [serverError, setServerError] = useState(false);
   const [forgotPassword, setForgotPassword] = useState(false);
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -49,13 +50,10 @@ const Login = ({ onLogin }) => {
     }
 
     try {
-      const response = await axios.post(
-        "https://hr-app-api-n2c1.onrender.com/api/v1/auth/login",
-        {
-          email,
-          password,
-        }
-      );
+      const response = await axios.post(`${apiUrl}/api/v1/auth/login`, {
+        email,
+        password,
+      });
       console.log("response ", response);
 
       if (response.status === 200) {
