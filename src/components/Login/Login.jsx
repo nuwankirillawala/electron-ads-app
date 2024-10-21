@@ -1,3 +1,22 @@
+/**
+ * Theta Documentation for React Component: Login
+ * ----------------------------------------------------------------------
+ * @file Login.jsx
+ * @description A login component that handles user authentication, including email and password validation, error handling, and server communication.
+ * @version 1.0.0
+ * @date 2024-10-20
+ * @Author: Nuwan Kirillawala @ Ceyapps Global
+ *
+ * @component
+ * @example
+ * // Usage in another component
+ * <Login onLogin={handleLogin} />
+ *
+ * @param {Function} onLogin - Function to be called after a successful login with user data.
+ *
+ * @returns {JSX.Element} A component for user login functionality.
+ */
+
 import React, { useState } from "react";
 import axios from "axios";
 import {
@@ -17,11 +36,16 @@ import { useTheme } from "@mui/material/styles";
 import CloseIcon from "@mui/icons-material/Close";
 import MinimizeIcon from "@mui/icons-material/Minimize";
 
+// Importing assets
 import logo from "/assets/images/logo.png";
 import dashboard from "/assets/images/mocks/dashboard_mock.png";
 import qhr_logo from "/assets/images/qhr_logo.svg";
 
+/**
+ * Component: Login
+ */
 const Login = ({ onLogin }) => {
+  // ---------------------- State Variables ----------------------
   const theme = useTheme();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -32,17 +56,18 @@ const Login = ({ onLogin }) => {
   const [forgotPassword, setForgotPassword] = useState(false);
   const apiUrl = import.meta.env.VITE_API_URL;
 
+  // ---------------------- Event Handlers ----------------------
+  /**
+   * handleSubmit - Submits the login form and validates credentials.
+   * @param {Event} event - The form submission event
+   */
   const handleSubmit = async (event) => {
     event.preventDefault();
     setEmailError(false);
     setPasswordError(false);
 
-    if (!email) {
-      setEmailError(true);
-    }
-    if (!password) {
-      setPasswordError(true);
-    }
+    if (!email) setEmailError(true);
+    if (!password) setPasswordError(true);
 
     if (!email || !password) {
       setError("Please enter both email and password.");
@@ -54,15 +79,13 @@ const Login = ({ onLogin }) => {
         email,
         password,
       });
-      console.log("response ", response);
 
       if (response.status === 200) {
         const token = response.data.data;
-
         const user = {
-          email: email,
-          password: password,
-          token: token,
+          email,
+          password,
+          token,
           profile: response.data.user,
         };
         onLogin(user);
@@ -76,15 +99,24 @@ const Login = ({ onLogin }) => {
     }
   };
 
+  /**
+   * handleForgotPassword - Opens the forgot password dialog.
+   */
   const handleForgotPassword = () => {
     setForgotPassword(true);
   };
 
+  /**
+   * handleCloseErrorDialog - Closes the error dialog.
+   */
   const handleCloseErrorDialog = () => {
     setServerError(false);
     setForgotPassword(false);
   };
 
+  /**
+   * handleMinimize - Minimizes the application window.
+   */
   const handleMinimize = () => {
     if (window.electron && window.electron.minimizeWindow) {
       window.electron.minimizeWindow();
@@ -93,6 +125,9 @@ const Login = ({ onLogin }) => {
     }
   };
 
+  /**
+   * handleClose - Closes the application window.
+   */
   const handleClose = () => {
     if (window.electron && window.electron.closeWindow) {
       window.electron.closeWindow();
@@ -101,6 +136,7 @@ const Login = ({ onLogin }) => {
     }
   };
 
+  // ---------------------- Render ----------------------
   return (
     <Box sx={{ display: "flex", height: "100vh" }}>
       {/* Left Side */}
@@ -160,6 +196,7 @@ const Login = ({ onLogin }) => {
             p: 2,
           }}
         >
+          {/* Control Buttons */}
           <Box
             sx={{
               position: "absolute",
@@ -179,6 +216,7 @@ const Login = ({ onLogin }) => {
             </IconButton>
           </Box>
 
+          {/* Login Form */}
           <Box
             sx={{
               display: "flex",
@@ -204,13 +242,7 @@ const Login = ({ onLogin }) => {
             </Typography>
           </Box>
 
-          <Box
-            sx={{
-              p: 1,
-              maxWidth: 400,
-              width: "100%",
-            }}
-          >
+          <Box sx={{ p: 1, maxWidth: 400, width: "100%" }}>
             <form onSubmit={handleSubmit} noValidate>
               <TextField
                 label="Email"
@@ -221,7 +253,7 @@ const Login = ({ onLogin }) => {
                 onChange={(e) => {
                   setEmail(e.target.value);
                   setEmailError(false);
-                  setError(false);
+                  setError(null);
                 }}
                 error={emailError}
                 sx={{ mb: 2 }}
@@ -236,7 +268,7 @@ const Login = ({ onLogin }) => {
                 onChange={(e) => {
                   setPassword(e.target.value);
                   setPasswordError(false);
-                  setError(false);
+                  setError(null);
                 }}
                 error={passwordError}
                 sx={{ mb: 1 }}
@@ -269,6 +301,8 @@ const Login = ({ onLogin }) => {
               </Button>
             </form>
           </Box>
+
+          {/* Footer Logo */}
           <Box mt={2}>
             <Box
               component="img"
@@ -278,7 +312,7 @@ const Login = ({ onLogin }) => {
             />
           </Box>
 
-          {/* Server Error Dialog Box */}
+          {/* Server Error Dialog */}
           <Dialog open={serverError} onClose={handleCloseErrorDialog}>
             <DialogTitle>Error</DialogTitle>
             <DialogContent>
@@ -294,7 +328,7 @@ const Login = ({ onLogin }) => {
             </DialogActions>
           </Dialog>
 
-          {/* Forgot Password Dialog Box */}
+          {/* Forgot Password Dialog */}
           <Dialog open={forgotPassword} onClose={handleCloseErrorDialog}>
             <DialogTitle>Ooops. Forgot Password?</DialogTitle>
             <DialogContent>

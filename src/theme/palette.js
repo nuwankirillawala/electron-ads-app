@@ -1,3 +1,22 @@
+/**
+ * Theta Documentation for React Palette Configuration
+ * ----------------------------------------------------------------------
+ * @file palette.js
+ * @description This file defines the color palette for the application, including the setup of primary, secondary, and other color variants. It supports light and dark modes and provides various levels of transparency for interactive elements.
+ * @version 1.0.0
+ * @date 2024-10-20
+ * @Author: Nuwan Kirillawala @ Ceyapps Global
+ *
+ * @function
+ * @example
+ * // Usage in ThemeProvider
+ * import { palette } from './palette';
+ * const theme = createTheme({ palette: palette(isDarkMode) });
+ *
+ * @param {boolean} isDarkMode - Flag indicating if the dark mode is active.
+ * @returns {Object} The palette configuration for the application theme.
+ */
+
 import { alpha } from "@mui/material/styles";
 
 // ----------------------------------------------------------------------
@@ -101,6 +120,12 @@ const base = {
 
 // ----------------------------------------------------------------------
 
+/**
+ * Function: palette
+ * @description Returns the palette configuration based on the mode (light/dark).
+ * @param {boolean} isDarkMode - Flag indicating if dark mode is enabled.
+ * @returns {Object} - An object containing the color settings for the theme.
+ */
 export function palette(isDarkMode) {
   return {
     ...base,

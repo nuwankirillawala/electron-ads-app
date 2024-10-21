@@ -1,8 +1,8 @@
 {
-  "name": "quantum-hr-app",
+  "name": "quantum-hr-notify-app",
   "version": "1.0.0",
   "type": "module",
-  "description": "Quantum HR App - PupUps portal",
+  "description": "QuantumHR - Notify App",
   "main": "src/main/main.js",
   "scripts": {
     "start": "electron .",

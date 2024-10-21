@@ -1,46 +1,58 @@
+/**
+ * Theta Documentation for React Component: Home
+ * ----------------------------------------------------------------------
+ * @file Home.jsx
+ * @description A component that serves as the main dashboard for the QuantumHR Notification Portal, displaying user profile information, popup options, and a queue management system.
+ * @version 1.0.0
+ * @date 2024-10-20
+ * @Author: Nuwan Kirillawala @ Ceyapps Global
+ *
+ * @component
+ * @example
+ * // Usage in another component
+ * <Home user={user} username={username} onLogout={handleLogout} />
+ *
+ * @param {Object} props - The properties object.
+ * @param {Object} props.user - The logged-in user object.
+ * @param {String} props.username - The username of the logged-in user.
+ * @param {Function} props.onLogout - Function to handle user logout.
+ *
+ * @returns {JSX.Element} A component that renders the main dashboard of QuantumHR Notification Portal.
+ */
+
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import {
   Typography,
-  Button,
   Paper,
   Box,
   IconButton,
   Grid,
   Avatar,
-  Switch,
-  MenuItem,
-  Select,
+  Tooltip,
   CssBaseline,
   GlobalStyles,
   AppBar,
   Toolbar,
   Badge,
-  Tooltip,
 } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
-import MinimizeIcon from "@mui/icons-material/Minimize";
-import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
-import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
-import PersonIcon from "@mui/icons-material/Person";
 import InfoIcon from "@mui/icons-material/Info";
-
+import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { useTheme, styled } from "@mui/material/styles";
-import { width } from "@mui/system";
-
-import { primary } from "../../theme/palette";
-
 import PopupOptions from "./PopupOptions";
 import ProfileDetails from "./ProfileDetails";
 import PopupQueue from "./PopupQueue";
-
 import acorn_logo_tp from "/assets/images/acorn_logo_tp.png";
 
+// ---------------------- Constants ----------------------
 const apiToken = import.meta.env.VITE_APP_IP_TOKEN;
 const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
+/**
+ * Home Component
+ */
 const Home = ({ user, username, onLogout }) => {
+  // ---------------------- State Variables ----------------------
   const [currentTime, setCurrentTime] = useState(new Date());
   const [location, setLocation] = useState({
     city: null,
@@ -49,16 +61,12 @@ const Home = ({ user, username, onLogout }) => {
   });
   const [runInBackground, setRunInBackground] = useState(false);
   const [pausePopups, setPausePopups] = useState(false);
-  const [workingCountry, setWorkingCountry] = useState(
-    user.profile.workingCountry || ""
-  );
   const [popupQueue, setPopupQueue] = useState([]);
-
   const theme = useTheme();
-  const isProVersion = false;
 
+  // ---------------------- Effects ----------------------
   useEffect(() => {
-    // Get the queue of popups
+    // Fetch initial popup queue and listen for updates
     const fetchInitialQueue = async () => {
       const queue = await window.electron.getPopupQueue();
       setPopupQueue(queue);
@@ -66,7 +74,6 @@ const Home = ({ user, username, onLogout }) => {
 
     fetchInitialQueue();
 
-    // Listener for popup queue updates
     const updateQueue = (event, updatedQueue) => {
       setPopupQueue(updatedQueue);
     };
@@ -78,13 +85,12 @@ const Home = ({ user, username, onLogout }) => {
       setCurrentTime(new Date());
     }, 1000);
 
-    // Fetch the user's IP address and get location.
+    // Fetch the user's IP address and get location
     axios
       .get("https://api.ipify.org?format=json")
-      .then((response) => {
-        const userIp = response.data.ip;
-        return axios.get(`https://ipinfo.io/${userIp}?token=${apiToken}`);
-      })
+      .then((response) =>
+        axios.get(`https://ipinfo.io/${response.data.ip}?token=${apiToken}`)
+      )
       .then((response) => {
         const { city, region, country } = response.data;
         setLocation({ city, region, country });
@@ -93,33 +99,33 @@ const Home = ({ user, username, onLogout }) => {
         console.error("Error fetching location:", error);
       });
 
+    // Cleanup
     return () => {
       clearInterval(timer);
       window.electron.off("popup-queue-updated", updateQueue);
     };
   }, []);
 
+  // ---------------------- Event Handlers ----------------------
+  /**
+   * Minimizes the application window.
+   */
   const handleMinimize = () => {
-    if (window.electron && window.electron.minimizeWindow) {
-      window.electron.minimizeWindow();
-    } else {
-      console.error("Electron IPC context not available");
-    }
+    window.electron?.minimizeWindow?.();
   };
 
+  /**
+   * Closes the application window.
+   */
   const handleClose = () => {
-    if (window.electron && window.electron.closeWindow) {
-      window.electron.minimizeWindow();
-    } else {
-      console.error("Electron IPC context not available");
-    }
+    window.electron?.closeWindow?.();
   };
 
-  const handleWorkingCountryChange = (event) => {
-    setWorkingCountry(event.target.value);
-    // Logic to update the working country
-  };
-
+  // ---------------------- Utility Functions ----------------------
+  /**
+   * Formats the current date for display.
+   * @returns {String} The formatted date string.
+   */
   const formattedDate = currentTime.toLocaleDateString("en-US", {
     weekday: "long",
     year: "numeric",
@@ -127,12 +133,17 @@ const Home = ({ user, username, onLogout }) => {
     day: "numeric",
   });
 
+  /**
+   * Formats the current time for display.
+   * @returns {String} The formatted time string.
+   */
   const formattedTime = currentTime.toLocaleTimeString("en-US", {
     hour: "2-digit",
     minute: "2-digit",
     second: "2-digit",
   });
 
+  // ---------------------- Styled Components ----------------------
   const StyledBadge = styled(Badge)(({ theme }) => ({
     "& .MuiBadge-badge": {
       backgroundColor: "#44b700",
@@ -155,19 +166,15 @@ const Home = ({ user, username, onLogout }) => {
       },
     },
     "@keyframes ripple": {
-      "0%": {
-        transform: "scale(.8)",
-        opacity: 1,
-      },
-      "100%": {
-        transform: "scale(2.4)",
-        opacity: 0,
-      },
+      "0%": { transform: "scale(.8)", opacity: 1 },
+      "100%": { transform: "scale(2.4)", opacity: 0 },
     },
   }));
 
+  // ---------------------- Render ----------------------
   return (
     <>
+      {/* Global Styles */}
       <CssBaseline />
       <GlobalStyles
         styles={{
@@ -183,23 +190,18 @@ const Home = ({ user, username, onLogout }) => {
           },
         }}
       />
-      <Box
-        sx={{
-          height: "100vh",
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
-        {/* ##################################### APPBAR ##################################### */}
-        {/* Title Bar */}
+
+      {/* Main Container */}
+      <Box sx={{ height: "100vh", display: "flex", flexDirection: "column" }}>
+        {/* AppBar */}
         <AppBar
           position="static"
           sx={{
-            backgroundColor: (theme) => theme.palette.background.paper,
-            color: (theme) => theme.palette.text.primary,
+            backgroundColor: theme.palette.background.paper,
+            color: theme.palette.text.primary,
             boxShadow: "none",
             backdropFilter: "blur(10px)",
-            borderBottom: (theme) => `1px solid ${theme.palette.divider}`,
+            borderBottom: `1px solid ${theme.palette.divider}`,
           }}
         >
           <Toolbar
@@ -217,58 +219,39 @@ const Home = ({ user, username, onLogout }) => {
                 style={{ height: "70px", marginRight: "8px" }}
               />
             </Box>
-            <Box sx={{ display: "flex", alignItems: "center" }}>
-              <Typography
-                variant="h6"
-                sx={{ color: (theme) => theme.palette.primary.main }}
-              >
-                QuantumHR Notification Portal
-              </Typography>
-            </Box>
-            <Box>
-              <Tooltip
-                title={
-                  <React.Fragment>
-                    <Typography variant="body2" color="inherit">
-                      Information:
-                    </Typography>
-                    <Typography variant="caption" color="inherit">
-                      - Product: QuantumHR Notify
-                    </Typography>
-                    <br />
-                    <Typography variant="caption" color="inherit">
-                      - Version: 1.0.0
-                    </Typography>
-                    <br />
-                    <Typography variant="caption" color="inherit">
-                      - Developed by: Ceyapps Global & NuraIT
-                    </Typography>
-                    <br />
-                    <Typography variant="caption" color="inherit">
-                      - For more info, Please contact the HR department
-                    </Typography>
-                  </React.Fragment>
-                }
-                arrow
-              >
-                <IconButton
-                  onClick={() => {
-                    console.log("Info button clicked");
-                    // Add any logic needed for the info button here
-                  }}
-                  sx={{ color: (theme) => theme.palette.primary.main }}
-                >
-                  <InfoIcon />
-                </IconButton>
-              </Tooltip>
-            </Box>
+            <Typography variant="h6" sx={{ color: theme.palette.primary.main }}>
+              QuantumHR Notification Portal
+            </Typography>
+            <Tooltip
+              title={
+                <>
+                  <Typography variant="body2">Information:</Typography>
+                  <Typography variant="caption">
+                    - Product: QuantumHR Notify
+                  </Typography>
+                  <br />
+                  <Typography variant="caption">- Version: 1.0.0</Typography>
+                  <br />
+                  <Typography variant="caption">
+                    - Developed by: Ceyapps Global & NuraIT
+                  </Typography>
+                  <br />
+                  <Typography variant="caption">
+                    - For more info, Please contact the HR department
+                  </Typography>
+                </>
+              }
+              arrow
+            >
+              <IconButton sx={{ color: theme.palette.primary.main }}>
+                <InfoIcon />
+              </IconButton>
+            </Tooltip>
           </Toolbar>
         </AppBar>
 
-        {/* ##################################### PROFILE ##################################### */}
-
+        {/* Profile Section */}
         <Box sx={{ flexGrow: 1, overflowY: "auto", padding: 2 }}>
-          {/* Profile Section */}
           <Grid container spacing={2} sx={{ padding: 2 }}>
             <Grid item xs={3}>
               <Paper
@@ -298,7 +281,6 @@ const Home = ({ user, username, onLogout }) => {
                 </StyledBadge>
               </Paper>
             </Grid>
-
             <ProfileDetails user={user} />
             <Grid item xs={4}>
               <Paper
@@ -306,12 +288,6 @@ const Home = ({ user, username, onLogout }) => {
                 sx={{ padding: 3, textAlign: "center", height: "100%" }}
               >
                 <LocationOnIcon fontSize="large" color="primary" />
-                {/* <Typography variant="body2" color="textSecondary">
-                  Country: {user.profile.country || "N/A"}
-                </Typography>
-                <Typography variant="body2" color="textSecondary">
-                  Working Country: {user.profile.workingCountry || "N/A"}
-                </Typography> */}
                 <Typography variant="body2" color="textSecondary">
                   Current Timezone:{" "}
                   {timeZone ? timeZone : "Unable to determine"}
@@ -320,9 +296,7 @@ const Home = ({ user, username, onLogout }) => {
             </Grid>
           </Grid>
 
-          {/* ##################################### POPUP OPTIONS ##################################### */}
-
-          {/* Buttons and Options Section */}
+          {/* Popup Options & Queue */}
           <Grid container spacing={2} sx={{ padding: 2 }}>
             <PopupOptions
               runInBackground={runInBackground}
@@ -330,81 +304,11 @@ const Home = ({ user, username, onLogout }) => {
               pausePopups={pausePopups}
               setPausePopups={setPausePopups}
             />
-
-            {/* ##################################### FEATURE SECTIONS ##################################### */}
-
-            {/* <Grid item xs={6}>
-              <Paper
-                elevation={3}
-                sx={{ position: "relative", padding: 3, textAlign: "center" }}
-              > */}
-            {/* Gray overlay for non-pro version */}
-            {/* {!isProVersion && (
-                  <Box
-                    sx={{
-                      position: "absolute",
-                      top: 0,
-                      left: 0,
-                      width: "100%",
-                      height: "100%",
-                      bgcolor: "rgba(0, 0, 0, 0.5)", // Gray overlay with 50% opacity
-                      zIndex: 1,
-                      pointerEvents: "none",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      color: "white",
-                      fontSize: "18px",
-                    }}
-                  >
-                    Beta Permission Required
-                  </Box>
-                )} */}
-            {/* Content underneath the overlay */}
-            {/* <Typography variant="h6">Change Working Country</Typography>
-                <Select
-                  value={workingCountry}
-                  onChange={handleWorkingCountryChange}
-                  fullWidth
-                  sx={{ mt: 2 }}
-                  disabled={!isProVersion} // Disable select for non-pro version
-                >
-                  <MenuItem value="Sri Lanka">Sri Lanka</MenuItem>
-                  <MenuItem value="India">India</MenuItem>
-                  <MenuItem value="United States">United States</MenuItem>
-                </Select>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  sx={{ mt: 2 }}
-                  onClick={() => {
-                    console.log("Working country changed to:", workingCountry);
-                  }}
-                  disabled={!isProVersion} // Disable button for non-pro version
-                >
-                  Change
-                </Button>
-              </Paper>
-            </Grid> */}
-          </Grid>
-
-          {/* Space for Future Components */}
-          <Grid container spacing={2} sx={{ padding: 2 }}>
-            <Box sx={{ flexGrow: 1, overflowY: "auto", padding: 2 }}>
-              {/* Other sections... */}
-
-              <PopupQueue queue={popupQueue} />
-
-              {/* Space for Future Components */}
-              <Grid container spacing={2} sx={{ padding: 2 }}>
-                {/* Add future components here */}
-              </Grid>
-            </Box>
+            <PopupQueue queue={popupQueue} />
           </Grid>
         </Box>
 
-        {/* ##################################### FOOTER ##################################### */}
-
+        {/* Footer */}
         <Box
           sx={{
             p: 2,
@@ -418,7 +322,7 @@ const Home = ({ user, username, onLogout }) => {
             mt: "auto",
             position: "fixed",
             bottom: 0,
-            backgroundColor: primary.contrastText,
+            backgroundColor: theme.palette.background.paper,
             left: 0,
             right: 0,
           }}

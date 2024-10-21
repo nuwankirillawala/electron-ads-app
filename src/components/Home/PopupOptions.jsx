@@ -1,3 +1,30 @@
+/**
+ * @file PopupOptions.jsx
+ * @description A component that displays and manages popup options, including the ability to run
+ *              the application in the background and pause popups for a specific duration.
+ * @version 1.0.0
+ * @date 2024-10-20
+ * @Author: Nuwan Kirillawala @ Ceyapps Global
+ *
+ * @component
+ * @example
+ * // Usage in another component
+ * <PopupOptions
+ *   runInBackground={runInBackground}
+ *   setRunInBackground={setRunInBackground}
+ *   pausePopups={pausePopups}
+ *   setPausePopups={setPausePopups}
+ * />
+ *
+ * @param {Object} props - The properties object.
+ * @param {boolean} props.runInBackground - Flag to indicate if the application should run in the background.
+ * @param {Function} props.setRunInBackground - Function to toggle running in the background.
+ * @param {boolean} props.pausePopups - Flag to indicate if popups are currently paused.
+ * @param {Function} props.setPausePopups - Function to toggle popup pausing.
+ *
+ * @returns {JSX.Element} A component that renders and manages popup options.
+ */
+
 import React, { useState, useEffect } from "react";
 import {
   Grid,
@@ -5,7 +32,6 @@ import {
   Typography,
   Box,
   Switch,
-  Button,
   IconButton,
   Dialog,
   DialogTitle,
@@ -15,39 +41,61 @@ import {
   RadioGroup,
   FormControlLabel,
   Radio,
+  Button,
 } from "@mui/material";
 import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
 import NotificationsOffIcon from "@mui/icons-material/NotificationsOff";
 import WebStoriesIcon from "@mui/icons-material/WebStories";
 
+/**
+ * PopupOptions Component
+ * @param {Object} props - The properties object.
+ * @param {boolean} props.runInBackground - Flag to indicate if the application should run in the background.
+ * @param {Function} props.setRunInBackground - Function to toggle running in the background.
+ * @param {boolean} props.pausePopups - Flag to indicate if popups are currently paused.
+ * @param {Function} props.setPausePopups - Function to toggle popup pausing.
+ * @returns {JSX.Element} A component that renders and manages popup options.
+ */
 const PopupOptions = ({
   runInBackground,
   setRunInBackground,
   pausePopups,
   setPausePopups,
 }) => {
+  // ---------------------- State Variables ----------------------
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedTime, setSelectedTime] = useState("none");
   const [isMuted, setIsMuted] = useState(false);
 
+  // ---------------------- Effects ----------------------
   useEffect(() => {
-    // Send the isMuted value to the main process whenever it changes
+    // Sync the muted state with the Electron main process
     window.electron.updateMuteStatus(isMuted);
   }, [isMuted]);
 
   useEffect(() => {
-    // Send the initial state to Electron
+    // Sync the run-in-background state with the Electron main process
     window.electron.updateRunInBackground(runInBackground);
   }, [runInBackground]);
 
+  // ---------------------- Event Handlers ----------------------
+  /**
+   * Opens the dialog for selecting the pause duration.
+   */
   const handleDialogOpen = () => {
     setDialogOpen(true);
   };
 
+  /**
+   * Closes the dialog without making changes.
+   */
   const handleDialogClose = () => {
     setDialogOpen(false);
   };
 
+  /**
+   * Confirms the pause duration and notifies the Electron main process.
+   */
   const handleDialogOk = () => {
     setDialogOpen(false);
     const pauseDuration = parseInt(selectedTime, 10);
@@ -55,7 +103,7 @@ const PopupOptions = ({
     setIsMuted(selectedTime !== "none");
 
     if (pauseDuration > 0) {
-      // Notify the main process to set up the reminders
+      // Notify the Electron main process to set up reminders
       window.electron.setPauseDuration(pauseDuration);
 
       setTimeout(() => {
@@ -65,10 +113,15 @@ const PopupOptions = ({
     }
   };
 
+  /**
+   * Updates the selected pause duration.
+   * @param {Object} event - The change event.
+   */
   const handleTimeChange = (event) => {
     setSelectedTime(event.target.value);
   };
 
+  // ---------------------- Render ----------------------
   return (
     <Grid container spacing={2}>
       <Grid item xs={12}>
@@ -83,7 +136,7 @@ const PopupOptions = ({
 
           {/* Options */}
           <Box>
-            {/* Row 1: Run in Background */}
+            {/* Run in Background Toggle */}
             <Box
               display="flex"
               justifyContent="space-between"
@@ -97,7 +150,7 @@ const PopupOptions = ({
               />
             </Box>
 
-            {/* Row 2: Pause Popups */}
+            {/* Pause Popups Button */}
             <Box
               display="flex"
               justifyContent="space-between"

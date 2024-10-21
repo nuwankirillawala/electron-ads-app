@@ -1,16 +1,38 @@
-import { alpha } from '@mui/material/styles';
+/**
+ * Theta Documentation for React Shadows Configuration
+ * ----------------------------------------------------------------------
+ * @file shadows.js
+ * @description This file defines the shadow effects used across the application, providing multiple elevation levels that create visual depth for components.
+ * @version 1.0.0
+ * @date 2024-10-20
+ * @Author: Nuwan Kirillawala @ Ceyapps Global
+ *
+ * @function
+ * @example
+ * // Usage in ThemeProvider
+ * import { shadows } from './shadows';
+ * const theme = createTheme({ shadows: shadows() });
+ *
+ * @returns {Array} An array of shadow definitions for different elevation levels.
+ */
 
-import { grey } from './palette';
+import { alpha } from "@mui/material/styles";
+import { grey } from "./palette";
 
 // ----------------------------------------------------------------------
 
+/**
+ * Function: shadows
+ * @description Generates an array of shadow styles for different elevation levels, using transparency from the grey palette.
+ * @returns {Array} - An array containing CSS box-shadow values for various elevation levels.
+ */
 export function shadows() {
   const transparent1 = alpha(grey[500], 0.2);
   const transparent2 = alpha(grey[500], 0.14);
   const transparent3 = alpha(grey[500], 0.12);
 
   return [
-    'none',
+    "none",
     `0px 2px 1px -1px ${transparent1},0px 1px 1px 0px ${transparent2},0px 1px 3px 0px ${transparent3}`,
     `0px 3px 1px -2px ${transparent1},0px 2px 2px 0px ${transparent2},0px 1px 5px 0px ${transparent3}`,
     `0px 3px 3px -2px ${transparent1},0px 3px 4px 0px ${transparent2},0px 1px 8px 0px ${transparent3}`,

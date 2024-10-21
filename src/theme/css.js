@@ -1,18 +1,33 @@
-import React from "react";
+/**
+ * Theta Documentation for React Styles Utility Functions
+ * ----------------------------------------------------------------------
+ * @file stylesUtility.js
+ * @description This file contains reusable style utility functions and styles for Material-UI components, including
+ *              gradient backgrounds, blur effects, and custom component styling for menus, papers, and more.
+ * @version 1.0.0
+ * @date 2024-10-20
+ * @Author: Nuwan Kirillawala @ Ceyapps Global
+ */
+
+// ----------------------------------------------------------------------
+
 import { alpha } from "@mui/material/styles";
 import { dividerClasses } from "@mui/material/Divider";
 import { checkboxClasses } from "@mui/material/Checkbox";
 import { menuItemClasses } from "@mui/material/MenuItem";
 import { autocompleteClasses } from "@mui/material/Autocomplete";
 
-// ----------------------------------------------------------------------
-
+/**
+ * Style: paper
+ * @param {Object} params - Object containing theme, background color, and dropdown flag
+ * @returns {Object} - Paper component styles with optional background and blur effects
+ */
 export const paper = ({ theme, bgcolor, dropdown }) => ({
   ...bgBlur({
     blur: 20,
     opacity: 0.9,
     color: theme.palette.background.paper,
-    ...(!!bgcolor && {
+    ...(bgcolor && {
       color: bgcolor,
     }),
   }),
@@ -32,6 +47,11 @@ export const paper = ({ theme, bgcolor, dropdown }) => ({
 
 // ----------------------------------------------------------------------
 
+/**
+ * Style: menuItem
+ * @param {Object} theme - Theme object for accessing typography and palette values
+ * @returns {Object} - Styles for menu items, including padding and selected state
+ */
 export const menuItem = (theme) => ({
   ...theme.typography.body2,
   padding: theme.spacing(0.75, 1),
@@ -64,6 +84,11 @@ export const menuItem = (theme) => ({
 
 // ----------------------------------------------------------------------
 
+/**
+ * Utility Function: bgBlur
+ * @param {Object} props - Object containing blur, opacity, color, and image URL
+ * @returns {Object} - Styles applying blur effect and optional background image
+ */
 export function bgBlur(props) {
   const color = props?.color || "#000000";
   const blur = props?.blur || 6;
@@ -98,6 +123,11 @@ export function bgBlur(props) {
 
 // ----------------------------------------------------------------------
 
+/**
+ * Utility Function: bgGradient
+ * @param {Object} props - Object containing gradient direction, colors, and image URL
+ * @returns {Object} - Styles applying gradient background and optional image
+ */
 export function bgGradient(props) {
   const direction = props?.direction || "to bottom";
   const startColor = props?.startColor;
@@ -123,6 +153,11 @@ export function bgGradient(props) {
 
 // ----------------------------------------------------------------------
 
+/**
+ * Utility Function: textGradient
+ * @param {string} value - Gradient value for text
+ * @returns {Object} - Styles applying a gradient to text
+ */
 export function textGradient(value) {
   return {
     background: `-webkit-linear-gradient(${value})`,
@@ -133,6 +168,11 @@ export function textGradient(value) {
 
 // ----------------------------------------------------------------------
 
+/**
+ * Utility Function: hideScroll
+ * Description: Styles to hide scrollbars for x or y axis
+ * @returns {Object} - Scroll hiding styles for x and y axes
+ */
 export const hideScroll = {
   x: {
     msOverflowStyle: "none",

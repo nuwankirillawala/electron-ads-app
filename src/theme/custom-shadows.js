@@ -1,5 +1,14 @@
-import { alpha } from "@mui/material/styles";
+/**
+ * Theta Documentation for React Styles Utility Function: customShadows
+ * ----------------------------------------------------------------------
+ * @file customShadows.js
+ * @description Defines custom shadow styles for various UI elements, including cards, dialogs, dropdowns, and more.
+ * @version 1.0.0
+ * @date 2024-10-20
+ * @Author: Nuwan Kirillawala @ Ceyapps Global
+ */
 
+import { alpha } from "@mui/material/styles";
 import {
   grey,
   info,
@@ -13,6 +22,11 @@ import {
 
 // ----------------------------------------------------------------------
 
+/**
+ * Function: customShadows
+ * @description Generates custom shadow styles for UI components such as cards, dialogs, and notifications.
+ * @returns {Object} - Object containing various shadow styles for components based on theme colors.
+ */
 export function customShadows() {
   const transparent = alpha(grey[500], 0.16);
 
@@ -24,7 +38,7 @@ export function customShadows() {
     z16: `0 16px 32px -4px ${transparent}`,
     z20: `0 20px 40px -4px ${transparent}`,
     z24: `0 24px 48px 0 ${transparent}`,
-    //
+    // Specific component shadows
     card: `0 0 2px 0 ${alpha(grey[500], 0.08)}, 0 12px 24px -4px ${alpha(
       grey[500],
       0.08
@@ -34,7 +48,7 @@ export function customShadows() {
       0.24
     )}, -20px 20px 40px -4px ${alpha(grey[500], 0.24)}`,
     dialog: `-40px 40px 80px -8px ${alpha(common.black, 0.24)}`,
-    //
+    // Thematic shadows
     primary: `0 8px 16px 0 ${alpha(primary.main, 0.24)}`,
     info: `0 8px 16px 0 ${alpha(info.main, 0.24)}`,
     secondary: `0 8px 16px 0 ${alpha(secondary.main, 0.24)}`,
