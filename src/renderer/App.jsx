@@ -53,7 +53,7 @@ function App() {
         console.log("app user data:", user);
 
         if (window.electron) {
-          window.electron.showAd(adData, user); // Notify the main process to show the ad
+          window.electron.showAd(adData, user, "new"); // Notify the main process to show the ad
         }
       };
 

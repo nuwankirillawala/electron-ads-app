@@ -33,6 +33,8 @@ import { primary } from "../../theme/palette";
 
 import PopupOptions from "./PopupOptions";
 import ProfileDetails from "./ProfileDetails";
+import PopupQueue from "./PopupQueue";
+
 import acorn_logo_tp from "/assets/images/acorn_logo_tp.png";
 
 const apiToken = import.meta.env.VITE_APP_IP_TOKEN;
@@ -50,11 +52,27 @@ const Home = ({ user, username, onLogout }) => {
   const [workingCountry, setWorkingCountry] = useState(
     user.profile.workingCountry || ""
   );
+  const [popupQueue, setPopupQueue] = useState([]);
 
   const theme = useTheme();
   const isProVersion = false;
 
   useEffect(() => {
+    // Get the queue of popups
+    const fetchInitialQueue = async () => {
+      const queue = await window.electron.getPopupQueue();
+      setPopupQueue(queue);
+    };
+
+    fetchInitialQueue();
+
+    // Listener for popup queue updates
+    const updateQueue = (event, updatedQueue) => {
+      setPopupQueue(updatedQueue);
+    };
+
+    window.electron.on("popup-queue-updated", updateQueue);
+
     // Update time every second
     const timer = setInterval(() => {
       setCurrentTime(new Date());
@@ -75,7 +93,10 @@ const Home = ({ user, username, onLogout }) => {
         console.error("Error fetching location:", error);
       });
 
-    return () => clearInterval(timer);
+    return () => {
+      clearInterval(timer);
+      window.electron.off("popup-queue-updated", updateQueue);
+    };
   }, []);
 
   const handleMinimize = () => {
@@ -369,7 +390,16 @@ const Home = ({ user, username, onLogout }) => {
 
           {/* Space for Future Components */}
           <Grid container spacing={2} sx={{ padding: 2 }}>
-            {/* Add future components here */}
+            <Box sx={{ flexGrow: 1, overflowY: "auto", padding: 2 }}>
+              {/* Other sections... */}
+
+              <PopupQueue queue={popupQueue} />
+
+              {/* Space for Future Components */}
+              <Grid container spacing={2} sx={{ padding: 2 }}>
+                {/* Add future components here */}
+              </Grid>
+            </Box>
           </Grid>
         </Box>
 

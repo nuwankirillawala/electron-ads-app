@@ -55,6 +55,9 @@ const PopupOptions = ({
     setIsMuted(selectedTime !== "none");
 
     if (pauseDuration > 0) {
+      // Notify the main process to set up the reminders
+      window.electron.setPauseDuration(pauseDuration);
+
       setTimeout(() => {
         setPausePopups(false);
         setIsMuted(false);
