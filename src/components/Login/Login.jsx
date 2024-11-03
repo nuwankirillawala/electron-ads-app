@@ -308,7 +308,7 @@ const Login = ({ onLogin }) => {
               component="img"
               src={qhr_logo}
               alt="Quantum HR Logo"
-              sx={{ width: 24, height: 24, mr: 1 }}
+              sx={{ width: 36, height: 36, mr: 1 }}
             />
           </Box>
 

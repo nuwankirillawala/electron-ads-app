@@ -1,4 +1,4 @@
-import { ipcMain, app, Notification } from "electron";
+import { ipcMain, app, Notification, shell } from "electron";
 import { saveUserData, clearUserData, loadUserData } from "./userData.js";
 import { createAdWindow, createFullAdWindow } from "./windows.js";
 
@@ -175,6 +175,12 @@ function initializeIpcHandlers(mainWindow) {
   ipcMain.on("update-run-in-background", (event, runInBg) => {
     console.log("Run in background status:", runInBg);
     runInBackground = runInBg;
+  });
+
+  ipcMain.on("open-external", (event, url) => {
+    shell.openExternal(url).catch((err) => {
+      console.error("Error opening URL:", err);
+    });
   });
 
   // Auto-login Logic

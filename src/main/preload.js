@@ -1,4 +1,4 @@
-const { contextBridge, ipcRenderer } = require("electron");
+const { contextBridge, ipcRenderer, shell } = require("electron");
 
 /**
  * Expose limited and secure Electron APIs to the renderer process.
@@ -61,6 +61,14 @@ contextBridge.exposeInMainWorld("electron", {
    * @returns {Promise<Array>} - A promise that resolves with the popup queue array.
    */
   getPopupQueue: () => ipcRenderer.invoke("get-popup-queue"),
+
+  /**
+   * Open a URL in the default system browser by sending an IPC message to the main process.
+   * @param {String} url - The URL to open.
+   */
+  openExternal: (url) => {
+    ipcRenderer.send("open-external", url);
+  },
 
   /**
    * Listen for a specific IPC event channel from the main process.

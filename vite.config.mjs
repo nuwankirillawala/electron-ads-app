@@ -1,7 +1,7 @@
 /**
- * Theta Documentation for Vite Configuration File: vite.config.js
+ * Theta Documentation for Vite Configuration File: vite.config.mjs
  * ----------------------------------------------------------------------
- * @file vite.config.js
+ * @file vite.config.mjs
  * @description Configuration settings for Vite, tailored for the QuantumHR Notify React application.
  *              This configuration includes plugin setups, build output specifications, and server settings.
  * @version 1.0.0
@@ -16,6 +16,7 @@ import path from "path";
 
 // Export Vite configuration
 export default defineConfig({
+  base: "./", // Ensures paths are relative for Electron's file:// protocol
   plugins: [react()], // Integrates React support via Vite plugin
   resolve: {
     alias: {
@@ -25,6 +26,8 @@ export default defineConfig({
   },
   build: {
     outDir: "dist", // Output directory for production build
+    assetsDir: "./",
+    sourcemap: false,
     rollupOptions: {
       output: {
         // Custom file naming patterns for output assets

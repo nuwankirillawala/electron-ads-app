@@ -10,8 +10,25 @@ dotenv.config();
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // Check if the app is running in development mode
-const isDev = true; // You can change this or uncomment below line for dynamic environment setup
-// const isDev = process.env.NODE_ENV === "development";
+// const isDev = true; // You can change this or uncomment below line for dynamic environment setup
+// Check if the app is running in development mode
+const isDev = process.env.VITE_APP_MODE === "development";
+
+console.log("VITE_APP_MODE:", process.env.VITE_APP_MODE);
+console.log("isDev:", isDev);
+
+// Helper function to get the platform-specific icon path
+function getPlatformIcon() {
+  switch (process.platform) {
+    case "win32":
+      return path.join(__dirname, "../../public/assets/images/icon.ico");
+    case "darwin":
+      return path.join(__dirname, "../../public/assets/images/icon.icns");
+    case "linux":
+    default:
+      return path.join(__dirname, "../../public/assets/images/icon.png");
+  }
+}
 
 let mainWindow;
 let adWindows = []; // Array to keep track of ad windows
@@ -21,10 +38,17 @@ let adWindows = []; // Array to keep track of ad windows
  * @returns {BrowserWindow} The main application window instance.
  */
 function createMainWindow() {
-  const iconPath = path.join(__dirname, "../../public/assets/images/icon.png");
+  const iconPath = getPlatformIcon();
+  // const iconPath = path.join(__dirname, "../../public/assets/images/icon.png");
+  // const startUrl = isDev
+  //   ? "http://localhost:3000"
+  //   : `file://${path.join(__dirname, "../../dist/index.html")}`;
+
   const startUrl = isDev
     ? "http://localhost:3000"
-    : `file://${path.join(__dirname, "../../dist/index.html")}`;
+    : `file://${path
+        .join(__dirname, "../../dist/index.html")
+        .replace(/\\/g, "/")}`;
 
   console.log("Start URL:", startUrl);
 
@@ -71,10 +95,12 @@ function createMainWindow() {
  * @param {boolean} runInBackground - Whether the ad window should run in the background.
  */
 function createAdWindow(ad, user, runInBackground) {
+  const iconPath = getPlatformIcon();
   const adWindow = new BrowserWindow({
     width: 800,
     height: 600,
-    frame: false,
+    frame: true,
+    icon: iconPath,
     alwaysOnTop: !runInBackground, // Always on top unless running in the background
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
@@ -120,6 +146,7 @@ function createAdWindow(ad, user, runInBackground) {
  * @param {boolean} runInBackground - Whether the ad window should run in the background.
  */
 function createFullAdWindow(ad, user, runInBackground) {
+  const iconPath = getPlatformIcon();
   const primaryDisplay = screen.getPrimaryDisplay();
   const { width, height } = primaryDisplay.workAreaSize;
 
@@ -128,6 +155,7 @@ function createFullAdWindow(ad, user, runInBackground) {
     height,
     frame: false,
     fullscreen: false,
+    icon: iconPath,
     alwaysOnTop: !runInBackground,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),

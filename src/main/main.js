@@ -8,6 +8,8 @@ import { initializeIpcHandlers } from "./ipcHandlers.js";
 // Load environment variables from .env file
 dotenv.config();
 
+app.setPath("userData", `${app.getPath("appData")}\\QuantumHR_Notify`);
+
 let mainWindow; // Variable to hold the main window instance
 
 /**

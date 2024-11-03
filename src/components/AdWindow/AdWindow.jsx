@@ -1,3 +1,15 @@
+/**
+ * Component: AdWindow
+ * Description: Displays an advertisement window with details such as title, image/video, message, and clickable links.
+ *              Allows the user to react to the ad and provides a minimize and close button.
+ *
+ * Props:
+ *  - adData (Object): Advertisement data containing title, image, message, and links.
+ *  - userData (Object): User data including user token for API requests.
+ *
+ * Author: Nuwan Kirillawala @ Ceyapps Global
+ */
+
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import {
@@ -12,8 +24,10 @@ import CloseIcon from "@mui/icons-material/Close";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import ThumbDownIcon from "@mui/icons-material/ThumbDown";
 import FavoriteIcon from "@mui/icons-material/Favorite";
+import MinimizeIcon from "@mui/icons-material/Minimize";
 
 const AdWindow = ({ adData, userData }) => {
+  // State variables
   const [ad, setAd] = useState(null);
   const [user, setUser] = useState({});
   const [selectedReaction, setSelectedReaction] = useState(null);
@@ -23,6 +37,10 @@ const AdWindow = ({ adData, userData }) => {
   const apiUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
+    /**
+     * Effect: Sets initial ad and user data, and sets up an event listener for showing ads.
+     * Cleanup: Removes the event listener on component unmount.
+     */
     const handleShowAd = (event, adData, userData) => {
       setAd(adData);
       setUser(userData);
@@ -37,6 +55,11 @@ const AdWindow = ({ adData, userData }) => {
     };
   }, [adData, userData]);
 
+  /**
+   * Function: handleReactionClick
+   * Description: Sends a reaction to the backend based on user selection.
+   * @param {Number} reaction - The reaction type (0 for dislike, 1 for like, 2 for favorite).
+   */
   const handleReactionClick = async (reaction) => {
     if (ad) {
       try {
@@ -59,10 +82,18 @@ const AdWindow = ({ adData, userData }) => {
     }
   };
 
+  /**
+   * Function: handleCloseSnackbar
+   * Description: Closes the snackbar notification.
+   */
   const handleCloseSnackbar = () => {
     setSnackbarOpen(false);
   };
 
+  /**
+   * Function: handleWindowClose
+   * Description: Closes the window and sends a reaction if no reaction was previously sent.
+   */
   const handleWindowClose = async () => {
     window.close();
     try {
@@ -87,6 +118,26 @@ const AdWindow = ({ adData, userData }) => {
     }
   };
 
+  /**
+   * Function: handleWindowMinimize
+   * Description: Minimizes the application window.
+   */
+  const handleWindowMinimize = () => {
+    console.log("Minimizing");
+
+    if (window.electron && window.electron.minimizeWindow) {
+      window.electron.minimizeWindow();
+    } else {
+      console.error("window.electron.minimizeWindow is not defined");
+    }
+  };
+
+  /**
+   * Function: isVideo
+   * Description: Checks if the provided URL points to a video file.
+   * @param {String} url - The URL to check.
+   * @returns {Boolean} - Returns true if the URL is a video.
+   */
   const isVideo = (url) => {
     const videoExtensions = ["mp4", "webm", "ogg"];
     const urlWithoutQuery = url.split("?")[0];
@@ -122,6 +173,8 @@ const AdWindow = ({ adData, userData }) => {
         >
           {ad.title}
         </Typography>
+
+        {/* Minimize Button */}
         <IconButton
           edge="end"
           sx={{ color: (theme) => theme.palette.error.dark }}
@@ -187,20 +240,35 @@ const AdWindow = ({ adData, userData }) => {
         <Typography variant="body1" paragraph sx={{ textAlign: "center" }}>
           {ad.message}
         </Typography>
-        {ad.link1 && (
-          <Typography variant="body1" paragraph sx={{ textAlign: "center" }}>
-            <Link href={ad.link1} target="_blank" rel="noopener noreferrer">
-              {ad.link1}
-            </Link>
-          </Typography>
-        )}
-        {ad.link2 && (
-          <Typography variant="body1" paragraph sx={{ textAlign: "center" }}>
-            <Link href={ad.link2} target="_blank" rel="noopener noreferrer">
-              {ad.link2}
-            </Link>
-          </Typography>
-        )}
+        <Link
+          href="#"
+          onClick={(e) => {
+            e.preventDefault();
+            if (window.electron && window.electron.openExternal) {
+              window.electron.openExternal(ad.link1);
+            } else {
+              console.error("window.electron.openExternal is not defined");
+            }
+          }}
+          sx={{ cursor: "pointer" }}
+        >
+          {ad.link1}
+        </Link>
+
+        <Link
+          href="#"
+          onClick={(e) => {
+            e.preventDefault();
+            if (window.electron && window.electron.openExternal) {
+              window.electron.openExternal(ad.link2);
+            } else {
+              console.error("window.electron.openExternal is not defined");
+            }
+          }}
+          sx={{ cursor: "pointer" }}
+        >
+          {ad.link2}
+        </Link>
       </Box>
 
       {/* Footer */}

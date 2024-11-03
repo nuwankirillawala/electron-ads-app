@@ -42,7 +42,7 @@ import { useTheme, styled } from "@mui/material/styles";
 import PopupOptions from "./PopupOptions";
 import ProfileDetails from "./ProfileDetails";
 import PopupQueue from "./PopupQueue";
-import acorn_logo_tp from "/assets/images/acorn_logo_tp.png";
+import acorn_logo_tp from "../../../public/assets/images/acorn_logo_tp.png";
 
 // ---------------------- Constants ----------------------
 const apiToken = import.meta.env.VITE_APP_IP_TOKEN;
