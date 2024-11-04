@@ -18,41 +18,33 @@
     "@emotion/styled": "^11.13.0",
     "@mui/icons-material": "^5.16.5",
     "@mui/material": "^5.16.5",
-    "@vitejs/plugin-react": "^4.3.1",
     "auto-launch": "^5.0.6",
     "axios": "^1.7.4",
     "dotenv": "^16.4.5",
-    "moment-timezone": "^0.5.46",
-    "path-browserify": "^1.0.1",
-    "prop-types": "^15.8.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.25.1",
-    "simplebar-react": "^3.2.6",
-    "socket.io-client": "^4.7.5",
-    "vite": "^5.4.1"
+    "socket.io-client": "^4.7.5"
   },
   "devDependencies": {
-    "concurrently": "^8.2.2",
+    "@vitejs/plugin-react": "^4.3.1",
     "electron": "^31.4.0",
     "electron-builder": "^24.13.3",
-    "rimraf": "^5.0.9"
+    "rimraf": "^5.0.9",
+    "vite": "^5.4.1",
+    "prop-types": "^15.8.1"
   },
   "build": {
     "appId": "com.quantumhr.app",
     "productName": "QuantumHRApp",
-    "files": [
-      "dist/**/*",
-      "src/main/**/*",
-      "public/**/*"
-    ],
+    "asar": true,
+    "compression": "maximum",
+    "files": ["dist/**/*", "src/main/**/*", "public/**/*"],
     "extraResources": [
       {
         "from": "public/assets/",
         "to": "assets/",
-        "filter": [
-          "**/*"
-        ]
+        "filter": ["**/*"]
       }
     ],
     "win": {

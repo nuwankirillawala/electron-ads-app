@@ -25,8 +25,8 @@ function initializeTray(mainWindow) {
     {
       label: "Quit",
       click: () => {
-        app.isQuiting = true;
-        app.quit(); // Quit the application when clicked
+        // app.isQuiting = true;
+        // app.quit(); // Quit the application when clicked
       },
     },
   ]);

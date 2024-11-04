@@ -99,7 +99,7 @@ function createAdWindow(ad, user, runInBackground) {
   const adWindow = new BrowserWindow({
     width: 800,
     height: 600,
-    frame: true,
+    frame: false,
     icon: iconPath,
     alwaysOnTop: !runInBackground, // Always on top unless running in the background
     webPreferences: {
